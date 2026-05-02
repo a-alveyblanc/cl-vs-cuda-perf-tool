@@ -1,0 +1,374 @@
+poclbin
+FP/OJMFKOBJGGECCDJDEJNKHLJCDFHMJECJCIBMG
+/program.bc
+0$JY
+I)5G
+ @64
+oXNO
+.`HE
+C*4j2T
+C"%P
+Js::
+oy;L
+P$v`
+f$c0
+fLg0
+3*6X
+fTsp
+r2H #
+(d<12B
+kernelwchar_sizePIC Levelclang version 19.1.7 (https://github.com/conda-forge/clangdev-feedstock 3c5e7de432e909e225d8040e72a44724afb0c446)loopy_kernel.meta.est.stack.size
+C2(3
+%h2bc
+ksi{#
+c+s1c
+    D
+nonedouble*restrict constrestrictulap_ucdoubleomnipotent charSimple C/C++ TBAA
+0b`  
+p|E@
+ 0bP$1
+b%2 0bP$1
+B&2 0
+2(K0bP$1
+28Q0bP$1
+ 0bP$1
+I0pv
+42 0bP$1
+'=^#
+ 0bP$1
+I0pPd>2 0bP$1
+ 0bP$1
+&1rAn
+8lr#
+L2 0bP$1
+I0ph
+O2 0bP$1
+gWL%
+eV2 
+E]2 0bP$1
+2bP$1
+A0bP$1
+\`+:
+A0bP$1
+Fg2 
+I0p@gm2 0
+3 0bP$1
+B0bP$1
+I0p|
+u2 pA
+pC`:h0
+pC@?f0
+!h!3
+B0bP$1
+B0bP$1
+B0bP$1
+0 @`
+pC0Jf0
+S+e@`
+C0bP$1
+C0bP$1
+C0bP$1
+C0bP$1
+C0bP$1
+C0bP$1
+pCPOf0
+#V-u
+cV-u
+I0pHK
+2 pAO1
+aPW'p
+! -4
+! -0
+pCP[f0
+! /4
+!x+0
+D0bP$1
+A%`"
+8iFc
+bDL7
+A&n"
+f 0bP$1
+a&n"
+8/go
+pC0rf0
+2 pC
+WoCL7
+E0bP$1
+E0bP$1
+pC`vf0
+pCPw`0
+^0 b
+2 0bP$1
+F0bP$1
+F0bP$1
+I0pN2
+F0bP$1
+F0bP$1
+F0bP$1
+F0bP$1
+I0p^3
+G0bP$1
+ 0(@`
+2 0bP$1
+2 0bP$1
+I0p|6 
+G0bP$1
+G0bP$1
+2 0bP$1
+ 0bP$1
+4@A|
+2 0bP$1
+H0bP$1
+H0bP$1
+H0bP$1
+I0pD9h
+I0p|9 
+H0bP$1
+2 0bP$1
+H0bP$1
+H0bP$1
+2 pC
+H0bP$1
+I0bP$1
+I0pZ<
+I0pn<
+<bP$1
+ 0bP$1
+2 0bP$1
+ 0bP$1
+I0p@?0
+ 0bP$1
+P0A!
+0HAA
+2 pA
+7bP$1
+u(d@
+0 @ 
+7bP$1
+0(@ 
+I0p@R0G!
+I0ppR
+6 HQ
+J0l@
+$Q+&I
+7bP$1
+`)d@`
+B@A 
+7bP$1
+x)d@`
+B@A 
+$xE?
+I0pJT
+YQ!>
+2 0bP$1
+'*d@
+TxQ!
+YBTl
+YbTl
+`D\l
+YB=F
+I0pBU8S!
+I0pRU
+I0pbU
+0PSA
+I0prU U!
+'pJ~
+_b\PL
+; ~C
+C-ym
+i* ~C
+!L>r
+!0O]
+&;`0
+"8MU
+!8Me
+6m[j@
+"8Mu
+}~[{
+"8MU
+!L>b
+"8Me
+{~7@
+o+|8
+/4 Z
+/R Z
+`Yl]
+mSO@
+sC%8
+y+>@
+sslh"
+ucU8
+i#-8
+q:7Z
+u[uP
+`Yl<
+oZ`A
+/8 Z
+wco@
+OR Z
+kK]8
+w|7B
+sCM8
+>P$*
+/< Z
+kk%8
+w+D8
+uSwP$*
+qCU@
+q[7A
+j:7Z
+k}7G
+o35@
+wcl8
+iS<8
+l^7c
+u{&P
+i+V8
+s[N8
+kc^8
+iz7L
+oSo8
+uk40
+u340
+MWAi
+yr:7u
+wsF@
+`Yj\
+ost@
+i[=@
+s[?P
+sk.h
+`Yn[
+s=7M
+s+N8
+6P$*
+s^7Q
+`Yj[
+kkdH
+sc]@
+mZ7P
+oKt@
+ySW@
+/U Z
+q['0
+o9 Z
+`Yp=
+9?hq"
+q+m8
+kS_@
+ykvh"
+kkO8
+/> Z
+O1 Z
+y{E8
+o{f8
+y[g8
+`Yn[
+wZ7b
+q#&8
+t}7N
+mk?@
+u+d@
+kK&0
+m;l8
+/6 Z
+iKgh
+`Yl{
+iCWX
+i+<H
+o5 Z
+uc<@
+kKTP$*
+u+eX
+kKO8
+p"_p
+sc?8
+`Yl[
+s+,0
+msw8
+u=7`
+{s_@
+ocW@
+q#u8
+wC\@
+{k}8
+-x@i
+y#T@
+ocEH
+{{~@
+`Ylz
+o8 Z
+wC,0
+OT Z
+wK6@
+uSm@
+i#U@
+k;v8
+y;F8
+sSv@
+o+oP$*
+iKmh
+yZ7Y
+{c}8
+w3lh"
+`Yx;7R
+`Yp|7
+{[lH
+`Yj>
+>)hq"
+FP$*
+yz?$hq"
+qS'P
+uZ7l
+{kw8
+s#>@
+`Yj;
+yn}7
+q~7W
+qS~@
+q#W8
+k;t8
+q#\8
+`Yn[
+s{%0
+skf@
+wK/0
+iCE8
+jZ7p
+oP Z
+q[|@
+ok^8
+kKo8
+q[$8
+y{]@
+yCnH
+ws48
+mKU8
+-hq"
+/9 Z
+u3G@
+uP$*
+k3}8
+`Yx<
+wcf@
+`Yn:
+ucd8
+ys,P
+s[m8
+sk&8
+`Yt>7
+s3O@
+'d!|
+sK=8
+OU Z
+eXW!H
+e8_!H
+e8e!H
+%((a
+loopy_kernel.u_ij_plane_work_dim_global_offset_x_global_offset_y_global_offset_z.str.str1.str2.str3.str4.str5.str6loopy_kernelllvm.lifetime.start.p0_Z12get_group_idj_Z12get_local_idj_Z7barrierjllvm.lifetime.end.p0llvm.fmuladd.f64llvm.nvvm.read.ptx.sreg.tid.xget_nvvm_tid_xllvm.nvvm.read.ptx.sreg.tid.yget_nvvm_tid_yllvm.nvvm.read.ptx.sreg.tid.zget_nvvm_tid_z__nv_frexpffrexpf_f32_i32llvm.nvvm.read.ptx.sreg.ctaid.xget_nvvm_ctaid_xllvm.nvvm.read.ptx.sreg.ctaid.yget_nvvm_ctaid_yllvm.nvvm.read.ptx.sreg.ctaid.zget_nvvm_ctaid_zllvm.nvvm.barrier0__nv_frexpfrexp_f64_i3219.1.7 a382b65fa8acaa0a89c62ebf739da268b1e12a3anvptx64/shared/home/aja13/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0000_fd25d_baseline_n64_sw5_bm16_bn16_bk32_pt16/opencl/pocl-cache/tempfile_ZgcLRv.cl
+loopy_kernel
+__attribute__((reqd_work_group_size(16, 16, 1 )))
+double*
+lap_u
+double*
+double*

@@ -1,0 +1,50 @@
+---------------------------------------------------------------------------
+KERNEL: loopy_kernel
+---------------------------------------------------------------------------
+ARGUMENTS:
+u: type: np:dtype('float64'), shape: (256, 256, 256), dim_tags: (N2:stride:65536, N1:stride:256, N0:stride:1) in aspace: global
+lap_u: type: np:dtype('float64'), shape: (256, 256, 256), dim_tags: (N2:stride:65536, N1:stride:256, N0:stride:1) out aspace: global
+c: type: np:dtype('float64'), shape: (9), dim_tags: (N0:stride:1) in aspace: global
+---------------------------------------------------------------------------
+DOMAINS:
+{ [ii, io, ji, jo, kb, ki, ko, l, ii_s_tile, ii_s_local, ji_s_tile, ji_s_local] : 0 <= ii <= 15 and 4 - ii <= 16io <= 251 - ii and 0 <= ji <= 15 and 4 - ji <= 16jo <= 251 - ji and 0 <= kb <= 8 and 0 <= ki <= 31 and 4 - ki <= 32ko <= 251 - ki and -4 <= l <= 4 and ii_s_tile >= 0 and ii_s_local >= 0 and 4 - 16io - 16ii_s_tile <= ii_s_local <= 259 - 16io - 16ii_s_tile and ii_s_local <= 23 - 16ii_s_tile and ii_s_local <= 15 and ji_s_tile >= 0 and ji_s_local >= -255 + 16io + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local >= -251 + 16io - 16jo + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local >= -19 + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local >= 0 and ji_s_local >= 4 - 16ii_s_tile - ii_s_local - 16ji_s_tile and ji_s_local >= -15 - 16jo + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local >= 4 - 16jo - 16ji_s_tile and ji_s_local >= 8 - 16jo - 16ii_s_tile - ii_s_local - 16ji_s_tile and ji_s_local >= 8 - 16io - 16ii_s_tile - ii_s_local - 16ji_s_tile and 12 - 16io - 16jo - 16ii_s_tile - ii_s_local - 16ji_s_tile <= ji_s_local <= 514 - 16io - 16jo - 16ii_s_tile - ii_s_local - 16ji_s_tile and ji_s_local <= 278 - 16io - 16ii_s_tile - ii_s_local - 16ji_s_tile and ji_s_local <= 278 - 16jo - 16ii_s_tile - ii_s_local - 16ji_s_tile and ji_s_local <= 259 - 16jo - 16ji_s_tile and ji_s_local <= 255 - 16jo + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local <= 42 - 16ii_s_tile - ii_s_local - 16ji_s_tile and ji_s_local <= 23 - 16ji_s_tile and ji_s_local <= 15 and ji_s_local <= 19 + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local <= 251 + 16io - 16jo + 16ii_s_tile + ii_s_local - 16ji_s_tile and ji_s_local <= 15 + 16io + 16ii_s_tile + ii_s_local - 16ji_s_tile }
+---------------------------------------------------------------------------
+INAME TAGS:
+ii: l.1
+ii_s_local: l.1
+ii_s_tile: None
+io: g.2
+ji: l.0
+ji_s_local: l.0
+ji_s_tile: None
+jo: g.1
+kb: unr
+ki: None
+ko: g.0
+l: None
+---------------------------------------------------------------------------
+TEMPORARIES:
+u_ij_plane: type: np:dtype('float64'), shape: (ii_s:24, ji_s:24), dim_tags: (N1:stride:24, N0:stride:1) aspace: local
+u_k_buf: type: np:dtype('float64'), shape: (kb:9), dim_tags: (N0:stride:1) aspace: private
+---------------------------------------------------------------------------
+INSTRUCTIONS:
+      for ki, jo, ko, io, ji_s_tile, ii_s_local, ii_s_tile, ji_s_local
+↱                     [36mu_ij_plane[ii_s_local + ii_s_tile*16, ji_s_local + ji_s_tile*16][0m = [35mu[-4 + 16*io + ii_s_local + ii_s_tile*16, -4 + 16*jo + ji_s_local + ji_s_tile*16, 32*ko + ki][0m  {id=[32mu_plane_compute[0m}
+│             end ji_s_tile, ii_s_local, ii_s_tile, ji_s_local
+│             for ji, ii, kb
+│                   if -5 + ki + 32*ko >= 0 and -1 + ki >= 0 and 7 + (-1)*kb >= 0
+│↱                    [36mu_k_buf[kb][0m = [35mu_k_buf[1 + kb][0m  {id=[32mu_ring_buf_compute_shift[0m}
+││                  end
+││                  if -8 + kb == 0
+│├↱                   [36mu_k_buf[kb][0m = [35mu[16*io + ii, 16*jo + ji, -4 + 32*ko + ki + kb][0m  {id=[32mu_ring_buf_compute_refill_0[0m}
+│││                 end
+│││                 if ko == 0 and 7 + (-1)*kb >= 0 and -4 + ki == 0
+││├↱                  [36mu_k_buf[kb][0m = [35mu[16*io + ii, 16*jo + ji, -4 + 32*ko + ki + kb][0m  {id=[32mu_ring_buf_compute_refill_1[0m}
+││││                end
+││││                if ki == 0 and 7 + (-1)*kb >= 0
+│││├↱                 [36mu_k_buf[kb][0m = [35mu[16*io + ii, 16*jo + ji, -4 + 32*ko + ki + kb][0m  {id=[32mu_ring_buf_compute_refill_2[0m}
+│││││               end
+│││││             end kb
+└└└└└             [36mlap_u[ii + io*16, ji + jo*16, ki + ko*32][0m = [35mreduce(sum, [l], c[l + 4]*(u_ij_plane[4 + ii + (-1)*l, 4 + ji] + u_ij_plane[4 + ii, 4 + ji + (-1)*l] + u_k_buf[4 + (-1)*l]))[0m  {id=[32minsn[0m}
+      end ki, jo, ko, io, ji, ii
+---------------------------------------------------------------------------

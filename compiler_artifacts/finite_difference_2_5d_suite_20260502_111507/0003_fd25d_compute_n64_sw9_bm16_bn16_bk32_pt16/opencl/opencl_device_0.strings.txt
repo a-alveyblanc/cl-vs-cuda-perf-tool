@@ -1,0 +1,317 @@
+poclbin
+IE/MIHLCDKIJAKPFAKAJHPCDCOLMJJNNMPGPHJEJ
+/program.bc
+0$JY
+I)5G
+ @64
+oXNO
+.`HE
+C*4j2T
+C"%P
+Js::
+oy;L
+P$v`
+f$c0
+fLg0
+3*6X
+r2H #
+(d<12B
+kernelwchar_sizePIC Levelclang version 19.1.7 (https://github.com/conda-forge/clangdev-feedstock 3c5e7de432e909e225d8040e72a44724afb0c446)loopy_kernel.meta.est.stack.size
+C2(3
+%h2bc
+ksi{#
+c+s1c
+nonedouble*restrict constrestrictulap_ucdoubleomnipotent charSimple C/C++ TBAA
+0b`  
+,A0P
+:d@`
+G0bP$1
+2 K0bP$1
+2$K0bP$1
+G.x"
+EYd@
+I0pB
+28Q0bP$1
+G>p#
+C=2 
+2XY0bP$1
+GMj$
+L2 pE~
+d0PA
+G\Z%
+pC`+f0
+ 0bP$1
+&g2 
+8yC6
+\@/:
+I0p`go2 0bP$1
+B0bP$1
+g|R'
+v2 pC
+B0bP$1
+B0bP$1
+!X!4
+B0bP$1
+BCL7
+8'%O
+'48]
+T>e@
+UOe@
+I0pd
+I0p~
+0 @`
+`@b'
+C0bP$1
+2 0bP$1
+!H13
+w1bP$1
+C0bP$1
+C0bP$1
+!x33
+k'p`
+C0bP$1
+ \`kt
+8)Go
+cs w
+pCpj`0
+C0bP$1
+o 0bP$1
+!p93
+!P70
+!h70
+D\pw0KP
+#1bP$1
+I0pd/
+D0bP$1
+D0bP$1
+ q{"
+u1bP$1
+I0pl0
+!&h"
+2 0bP$1
+ .X?
+a&h"
+2 0bP$1
+I0pZ1
+D0bP$1
+I0pp1
+2 pC
+I0pz2@
+E0bP$1
+E0bP$1
+I0pN3
+%A\p
+gpA[
+E0bP$1
+E0bP$1
+E0bP$1
+00K@
+I0pR5x
+L|bX
+I0pH6X
+F0bP$1
+0ia4f
+I0pD7@
+A5V#
+2 0bP$1
+0bP$1
+F0bP$1
+I0pF8h
+7bP$1
+A@A 
+2 0bP$1
+I0pJ9P
+I0pb9
+2 0bP$1
+F0l@
+7bP$1
+A@A 
+7bP$1
+0 @ 
+ 0bP$1
+6 L9
+2 0bP$1
+I0p^;
+7bP$1
+0(@ 
+1bP$1
+I0p`<
+I0pb=
+2 0bP$1
+!/tx
+A/tx
+b?tx
+!/tx
+A/tx
+j?tx
+I0xD>p
+ Dx|
+2bP$1
+!0OM
+"8MU
+`@#8
+}][q
+U:0@
+1 U]
+5B3 
+"8Me
+}m_f@
+"8MU
+3IT`
+&<`0
+ I>C-7
+"8Me
+!8Me
+~tH=
+[`A3 
+ I>C-7
+!0O]
+3IT`
+"8MU
+t~[h
+"8Me
+!8Me
+<A"0
+"8MU
+!L>b
+"8Me
+z~cbP8
+3IT`
+!8Mu
+d@!0O
+3A$=
+"8MU
+"8Me
+s@!0O_
+3IT`
+w}[|
+3IT`
+"8MU
+!8MU
+~B$=
+3IT`
+kA2 
+3IT`
+"8Me
+"8MU
+"8MU
+!8MU
+i60@
+9^_y
+2\v~
+"8MU
+"8Me
+"8Me
+"8MU
+dB3 
+Vmp0
+FL`0
+sA$=
+fA$=
+"8MU
+"8Me
+"8MU
+"8MU
+!0OM
+"8MU
+N[dB$=
+!L>b
+tN[g
+ I>0
+"8Me
+"8MU
+"8Me
+"8Me
+L`HTP
+!0O]
+"8MU
+C-vM
+{~[~
+1B$=
+3IT`
+"8MU
+!8Me
+"8Me
+!8Mu
+"8MU
+C-=o
+C-9n
+ I>0
+{n[7
+"8MU
+"8MU
+wB$=
+3IT`
+,vO_
+9}mL
+!0OM
+<A$=
+"8MU
+C-6N
+,xn[
+"8Me
+"8MU
+:^_~
+!0Om
+{B2 
+,6N[
+!0O}
+<B"0
+"8Me
+!0On
+"8MU
+!8Mu
+"8Me
+"8MU
+!0O]
+!0O]
+3IT`
+!8MU
+}M[$
+!0O]
+"8MU
+U# ~C
+"8MU
+"8MU
+gA3 
+T}N[
+"8MU
+M;0@
+!0OM
+A46m
+ I>C-7
+?A"0
+<A2 
+rA"0
+iZ7y
+/2 Z
+i{?@
+o+40
+`Yl\
+oc}@
+kS>@
+p"?p
+s#<H
+`Yp}7
+y{/8
+x^7k
+aq"_p
+kSo@
+m+FP$*
+k+?8
+qs^@
+o378
+skl@
+uk_@
+'d!|
+mK7@
+=?&h
+kSu8
+%((a
+loopy_kernel.u_ij_plane_work_dim_global_offset_x_global_offset_y_global_offset_z.str.str1.str2.str3.str4.str5.str6loopy_kernelllvm.lifetime.start.p0_Z12get_group_idj_Z12get_local_idj_Z7barrierjllvm.lifetime.end.p0llvm.fmuladd.f64llvm.nvvm.read.ptx.sreg.tid.xget_nvvm_tid_xllvm.nvvm.read.ptx.sreg.tid.yget_nvvm_tid_yllvm.nvvm.read.ptx.sreg.tid.zget_nvvm_tid_z__nv_frexpffrexpf_f32_i32llvm.nvvm.read.ptx.sreg.ctaid.xget_nvvm_ctaid_xllvm.nvvm.read.ptx.sreg.ctaid.yget_nvvm_ctaid_yllvm.nvvm.read.ptx.sreg.ctaid.zget_nvvm_ctaid_zllvm.nvvm.barrier0__nv_frexpfrexp_f64_i3219.1.7 a382b65fa8acaa0a89c62ebf739da268b1e12a3anvptx64/shared/home/aja13/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0000_fd25d_baseline_n64_sw5_bm16_bn16_bk32_pt16/opencl/pocl-cache/tempfile_vSmIHj.cl
+loopy_kernel
+__attribute__((reqd_work_group_size(16, 16, 1 )))
+double*
+lap_u
+double*
+double*

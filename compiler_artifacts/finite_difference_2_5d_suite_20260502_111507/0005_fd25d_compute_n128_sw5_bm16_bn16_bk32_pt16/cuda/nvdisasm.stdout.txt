@@ -1,0 +1,992 @@
+	.target	sm_90
+
+	.elftype	@"ET_EXEC"
+
+
+//--------------------- .text.loopy_kernel        --------------------------
+	.section	.text.loopy_kernel,"ax",@progbits
+	.align	128
+        .global         loopy_kernel
+        .type           loopy_kernel,@function
+        .size           loopy_kernel,(.L_x_18 - loopy_kernel)
+        .other          loopy_kernel,@"STO_CUDA_ENTRY STV_DEFAULT"
+loopy_kernel:
+.text.loopy_kernel:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 19
+        /*0000*/                   LDC R1, c[0x0][0x28] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*0010*/                   S2R R0, SR_TID.X ;
+        /*0020*/                   ULDC.64 UR6, c[0x0][0x208] ;
+        /*0030*/                   S2R R3, SR_CTAID.Y ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*0040*/                   S2R R2, SR_CTAID.Z ;
+        /*0050*/                   S2R R5, SR_TID.Y ;
+        /*0060*/                   IADD3 R17, -R0.reuse, 0x3, RZ ;
+        /*0070*/                   IMAD R22, R0.reuse, 0xd, RZ ;
+        /*0080*/                   IADD3 R12, -R0, -0xf, RZ ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*0090*/                   IMAD R4, R3.reuse, 0x10, R0 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*00a0*/                   IADD3 R28, -R3, 0x6, RZ ;
+        /*00b0*/                   IADD3 R19, -R0, 0x1, RZ ;
+        /*00c0*/                   VIADD R7, R4, 0xfffffffc ;
+        /*00d0*/                   LOP3.LUT P6, RZ, R3, RZ, R2, 0xfa, !PT ;
+        /*00e0*/                   IMAD R14, R2.reuse, 0xf0, RZ ;
+        /*00f0*/                   ISETP.NE.AND P2, PT, R2, 0x7, PT ;
+        /*0100*/                   IMAD.IADD R16, R0.reuse, 0x1, R5.reuse ;
+        /*0110*/                   IADD3 R8, -R5.reuse, 0x2, RZ ;
+        /*0120*/                   VIADD R33, R5.reuse, 0xc ;
+        /*0130*/                   ISETP.GT.AND P0, PT, R5, RZ, !P6 ;
+        /*0140*/                   IMAD.IADD R32, R0, 0x1, R5.reuse ;
+        /*0150*/                   LOP3.LUT R9, R2, RZ, R5, 0xfa, !PT ;
+        /*0160*/                   LOP3.LUT R6, R28, 0x80000000, R7, 0xc8, !PT ;
+        /*0170*/                   ISETP.GT.AND P0, PT, R8, -0x1, P0 ;
+        /*0180*/                   IMAD R8, R0, -0xd, RZ ;
+        /*0190*/                   ISETP.GT.AND P5, PT, R5, 0x1, PT ;
+        /*01a0*/                   LOP3.LUT P1, RZ, R6, R9, RZ, 0xfc, !PT ;
+        /*01b0*/                   LOP3.LUT P3, RZ, R2, RZ, R5, 0xfa, !PT ;
+        /*01c0*/                   P2R R6, PR, RZ, 0x20 ;
+        /*01d0*/                   IMAD R6, R3, -0xf0, R8 ;
+        /*01e0*/                   ISETP.GT.AND P0, PT, R0, 0x1, P0 ;
+        /*01f0*/                   IADD3 R23, -R5, 0x3, RZ ;
+        /*0200*/                   VIADD R6, R6, 0x19 ;
+        /*0210*/                   ISETP.EQ.AND P3, PT, R3, 0x7, !P3 ;
+        /*0220*/                   ISETP.GT.AND P4, PT, R17, -0x1, P0 ;
+        /*0230*/                   ISETP.EQ.AND P0, PT, R3, 0x7, !P2 ;
+        /*0240*/                   LOP3.LUT R7, R28, R23, R3, 0xfe, !PT ;
+        /*0250*/                   PLOP3.LUT P1, PT, P1, P3, P4, 0xef, 0x0 ;
+        /*0260*/                   ISETP.EQ.AND P3, PT, R2, 0x7, P5 ;
+        /*0270*/                   IADD3 R9, -R5.reuse, 0xe, RZ ;
+        /*0280*/                   ISETP.GT.AND P4, PT, R5, 0x3, P0 ;
+        /*0290*/                   LOP3.LUT R7, R7, R6, RZ, 0xfc, !PT ;
+        /*02a0*/                   ISETP.GT.AND P5, PT, R5, 0x1, P0 ;
+        /*02b0*/                   ISETP.GT.AND P4, PT, R9, -0x1, P4 ;
+        /*02c0*/                   ISETP.GT.AND P3, PT, R7, -0x1, P3 ;
+        /*02d0*/                   ISETP.GT.AND P5, PT, R23, -0x1, P5 ;
+        /*02e0*/                   P2R R20, PR, RZ, 0x1 ;
+        /*02f0*/                   PLOP3.LUT P0, PT, P3, P4, P5, 0xfe, 0x0 ;
+        /*0300*/                   ISETP.GT.AND P3, PT, R0, -0x1, PT ;
+        /*0310*/                   LOP3.LUT R7, RZ, R0, RZ, 0x33, !PT ;
+        /*0320*/                   SEL R10, RZ, 0xf, !P3 ;
+        /*0330*/                   ISETP.NE.AND P5, PT, R2.reuse, RZ, PT ;
+        /*0340*/                   P2R R67, PR, RZ, 0x1 ;
+        /*0350*/                   IMAD.IADD R7, R7, 0x1, -R10 ;
+        /*0360*/                   ISETP.EQ.AND P0, PT, R3, RZ, !P2 ;
+        /*0370*/                   IADD3 R58, -R2, 0x6, RZ ;
+        /*0380*/                   SHF.R.S32.HI R10, RZ, 0x1f, R7 ;
+        /*0390*/                   IADD3 R8, R14, -0x1, R8 ;
+        /*03a0*/                   LEA.HI R10, R10, R7, RZ, 0x4 ;
+        /*03b0*/                   ISETP.EQ.AND P5, PT, R3, 0x7, !P5 ;
+        /*03c0*/                   SHF.R.S32.HI R7, RZ, 0x4, R10 ;
+        /*03d0*/                   LOP3.LUT R9, R10, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*03e0*/                   P2R R64, PR, RZ, 0x1 ;
+        /*03f0*/                   IMAD R7, R7, -0x10, R12 ;
+        /*0400*/                   IADD3 R10, R0, 0x10, R9 ;
+        /*0410*/                   ISETP.EQ.AND P3, PT, R5, 0x1, P0 ;
+        /*0420*/                   LOP3.LUT R12, R19.reuse, R58, R2, 0xfe, !PT ;
+        /*0430*/                   LOP3.LUT R11, R19, R0, RZ, 0xfc, !PT ;
+        /*0440*/                   ISETP.EQ.AND P5, PT, R5, 0x3, P5 ;
+        /*0450*/                   LOP3.LUT R9, R7, R8, R10, 0xfe, !PT ;
+        /*0460*/                   ISETP.NE.AND P0, PT, R5, 0x3, PT ;
+        /*0470*/                   ISETP.GT.AND P5, PT, R11, -0x1, P5 ;
+        /*0480*/                   LOP3.LUT R12, R12, R9, RZ, 0xfc, !PT ;
+        /*0490*/                   ISETP.EQ.AND P2, PT, R3, 0x7, !P0 ;
+        /*04a0*/                   IADD3 R11, -R0, 0x4, -R5 ;
+        /*04b0*/                   ISETP.GT.AND P4, PT, R12, -0x1, P2 ;
+        /*04c0*/                   SHF.R.S32.HI R12, RZ, 0x1f, R11 ;
+        /*04d0*/                   IADD3 R26, -R0, 0x3, RZ ;
+        /*04e0*/                   LOP3.LUT R12, R12, 0xf, RZ, 0xc0, !PT ;
+        /*04f0*/                   ISETP.GT.AND P3, PT, R0.reuse, 0x1, P3 ;
+        /*0500*/                   IADD3 R18, R0, 0xf, -R5 ;
+        /*0510*/                   IMAD.IADD R12, R11, 0x1, -R12 ;
+        /*0520*/                   ISETP.GT.AND P3, PT, R26, -0x1, P3 ;
+        /*0530*/                   IADD3 R24, -R0, 0x1, RZ ;
+        /*0540*/                   SHF.R.S32.HI R13, RZ, 0x1f, R12 ;
+        /*0550*/                   PLOP3.LUT P0, PT, P3, P4, P5, 0xfe, 0x0 ;
+        /*0560*/                   LEA.HI R13, R13, R12, RZ, 0x4 ;
+        /*0570*/                   ISETP.LT.AND P2, PT, R2, RZ, P2 ;
+        /*0580*/                   SHF.R.S32.HI R12, RZ, 0x4, R13 ;
+        /*0590*/                   LOP3.LUT R13, R13, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*05a0*/                   P2R R66, PR, RZ, 0x4 ;
+        /*05b0*/                   IMAD R15, R12, -0x10, R11 ;
+        /*05c0*/                   LOP3.LUT R12, R23, 0x80000000, R58, 0xc8, !PT ;
+        /*05d0*/                   IMAD.IADD R11, R18, 0x1, R13.reuse ;
+        /*05e0*/                   IADD3 R13, R16, 0xb, R13 ;
+        /*05f0*/                   LOP3.LUT P3, R25, R12, RZ, R3, 0xfa, !PT ;
+        /*0600*/                   LOP3.LUT R12, R13, R8, R11, 0xfe, !PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 25
+        /*0610*/                   S2R R11, SR_CTAID.X ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*0620*/                   IADD3 R18, -R0, 0xa, RZ ;
+        /*0630*/                   ISETP.LT.OR P3, PT, R5, 0x1, P3 ;
+        /*0640*/                   LOP3.LUT R16, R3, RZ, R2, 0xfa, !PT ;
+        /*0650*/                   ISETP.LT.OR P3, PT, R18, RZ, P3 ;
+        /*0660*/                   LOP3.LUT R12, R12, R15, RZ, 0xfc, !PT ;
+        /*0670*/                   LOP3.LUT P4, RZ, R16, R5, RZ, 0xfc, !PT ;
+        /*0680*/                   ISETP.LT.OR P3, PT, R12, RZ, P3 ;
+        /*0690*/                   ISETP.GT.AND P4, PT, R17, -0x1, !P4 ;
+        /*06a0*/                   LOP3.LUT R13, R23, R58, RZ, 0xfc, !PT ;
+        /*06b0*/                   PLOP3.LUT P5, PT, P3, P1, P4, 0x10, 0x0 ;
+        /*06c0*/                   ISETP.GE.AND P4, PT, R5, 0x1, PT ;
+        /*06d0*/                   IADD3 R17, -R3, 0x7, RZ ;
+        /*06e0*/                   ISETP.LT.OR P4, PT, R13, RZ, !P4 ;
+        /*06f0*/                   LOP3.LUT R13, R8, R17, RZ, 0xfc, !PT ;
+        /*0700*/                   ISETP.NE.AND P3, PT, R5, 0x3, PT ;
+        /*0710*/                   LOP3.LUT R21, R23, 0x80000000, R24, 0xc8, !PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 25
+        /*0720*/                   ISETP.GT.AND P1, PT, R11, RZ, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*0730*/                   IADD3 R59, -R5, 0x1, RZ ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 25
+        /*0740*/                   SEL R12, RZ, 0x2, P1 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*0750*/                   ISETP.GE.AND P1, PT, R3, 0x1, PT ;
+        /*0760*/                   IMAD.IADD R39, R59, 0x1, R0 ;
+        /*0770*/                   IADD3 R29, -R5, 0x2, RZ ;
+        /*0780*/                   ISETP.LT.OR P1, PT, R13, RZ, !P1 ;
+        /*0790*/                   IMAD R13, R2, -0xf0, R22.reuse ;
+        /*07a0*/                   IADD3 R40, R0, -0x3, -R5 ;
+        /*07b0*/                   IMAD R22, R3.reuse, 0xf0, R22 ;
+        /*07c0*/                   PLOP3.LUT P4, PT, P1, P4, PT, 0xa8, 0x0 ;
+        /*07d0*/                   ISETP.EQ.AND P1, PT, R3, RZ, !P3 ;
+        /*07e0*/                   VIADD R22, R22, 0xffffffe6 ;
+        /*07f0*/                   LOP3.LUT R13, R24, R13, RZ, 0xfc, !PT ;
+        /*0800*/                   ISETP.LT.AND P3, PT, R2, RZ, P1 ;
+        /*0810*/                   ISETP.GT.AND P2, PT, R13, -0x1, P2 ;
+        /*0820*/                   SHF.R.S32.HI R13, RZ, 0x1f, R23 ;
+        /*0830*/                   ISETP.GT.AND P3, PT, R0, 0x1, P3 ;
+        /*0840*/                   LOP3.LUT R16, R13, 0xf, RZ, 0xc0, !PT ;
+        /*0850*/                   IMAD R13, R5, 0xd, R14 ;
+        /*0860*/                   ISETP.GT.AND P3, PT, R26, -0x1, P3 ;
+        /*0870*/                   IADD3 R14, -R3, 0x9, -R5 ;
+        /*0880*/                   IMAD.IADD R16, R23, 0x1, -R16 ;
+        /*0890*/                   PLOP3.LUT P2, PT, P2, P3, PT, 0xa8, 0x0 ;
+        /*08a0*/                   VIADD R13, R13, 0xffffffe6 ;
+        /*08b0*/                   LOP3.LUT R17, R14, R17, RZ, 0xfc, !PT ;
+        /*08c0*/                   P2R R65, PR, RZ, 0x4 ;
+        /*08d0*/                   SHF.R.S32.HI R15, RZ, 0x1f, R16 ;
+        /*08e0*/                   LOP3.LUT P2, RZ, R21, R2, RZ, 0xfc, !PT ;
+        /*08f0*/                   LEA.HI R15, R15, R16, RZ, 0x4 ;
+        /*0900*/                   ISETP.LT.OR P2, PT, R5, 0x1, P2 ;
+        /*0910*/                   LOP3.LUT R34, R15, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*0920*/                   IMAD R15, R5, 0xf, RZ ;
+        /*0930*/                   ISETP.LT.OR P3, PT, R3, RZ, P2 ;
+        /*0940*/                   LOP3.LUT R14, R13, R23, R58, 0xfe, !PT ;
+        /*0950*/                   IMAD.IADD R33, R33, 0x1, R34 ;
+        /*0960*/                   ISETP.LT.OR P3, PT, R17, RZ, P3 ;
+        /*0970*/                   IMAD R17, R5, 0xf, RZ ;
+        /*0980*/                   IADD3 R34, RZ, -R34, -R5 ;
+        /*0990*/                   VIADD R15, R15, 0x3 ;
+        /*09a0*/                   ISETP.GE.AND P2, PT, R14, RZ, PT ;
+        /*09b0*/                   VIADD R17, R17, 0x61 ;
+        /*09c0*/                   LOP3.LUT R14, R33, R34, RZ, 0xfc, !PT ;
+        /*09d0*/                   ISETP.NE.OR P2, PT, R3, 0x7, !P2 ;
+        /*09e0*/                   SHF.R.S32.HI R16, RZ, 0x1f, R15 ;
+        /*09f0*/                   ISETP.LT.OR P2, PT, R14, RZ, P2 ;
+        /*0a00*/                   SHF.R.S32.HI R18, RZ, 0x1f, R17 ;
+        /*0a10*/                   PLOP3.LUT P3, PT, P2, P3, PT, 0x80, 0x0 ;
+        /*0a20*/                   LEA.HI R16, R16, R15, RZ, 0x4 ;
+        /*0a30*/                   ISETP.EQ.AND P2, PT, R5.reuse, 0x3, !P6 ;
+        /*0a40*/                   LEA.HI R18, R18, R17, RZ, 0x4 ;
+        /*0a50*/                   IMAD R17, R0.reuse, 0xf, RZ ;
+        /*0a60*/                   IADD3 R15, -R5, -0x5, RZ ;
+        /*0a70*/                   ISETP.GT.AND P2, PT, R0, 0x1, P2 ;
+        /*0a80*/                   VIADD R27, R17.reuse, 0x3 ;
+        /*0a90*/                   LEA.HI.SX32 R18, R18, R15, 0x1c ;
+        /*0aa0*/                   VIADD R17, R17, 0x61 ;
+        /*0ab0*/                   LEA.HI.SX32 R15, R16, R59, 0x1c ;
+        /*0ac0*/                   ISETP.GT.AND P2, PT, R26, -0x1, P2 ;
+        /*0ad0*/                   IMAD R26, R32, 0xf, RZ ;
+        /*0ae0*/                   SEL R16, R18, R15, P5 ;
+        /*0af0*/                   IMAD R18, R0, 0xf, R5 ;
+        /*0b00*/                   PLOP3.LUT P2, PT, P0, P2, PT, 0xa8, 0x0 ;
+        /*0b10*/                   VIADD R62, R26, 0x2 ;
+        /*0b20*/                   ISETP.NE.AND P0, PT, R20, RZ, PT ;
+        /*0b30*/                   VIADD R20, R18.reuse, 0x1 ;
+        /*0b40*/                   SHF.R.S32.HI R30, RZ, 0x1f, R27 ;
+        /*0b50*/                   VIADD R61, R18, 0xf ;
+        /*0b60*/                   SHF.R.S32.HI R38, RZ, 0x1f, R17 ;
+        /*0b70*/                   SHF.R.S32.HI R21, RZ, 0x1f, R20 ;
+        /*0b80*/                   LEA.HI R37, R38, R17, RZ, 0x4 ;
+        /*0b90*/                   LEA.HI R20, R21, R20, RZ, 0x4 ;
+        /*0ba0*/                   VIADD R21, R18, 0xd ;
+        /*0bb0*/                   LEA.HI R18, R30, R27, RZ, 0x4 ;
+        /*0bc0*/                   LEA.HI.SX32 R17, R20, R19, 0x1c ;
+        /*0bd0*/                   IMAD.IADD R20, R29, 0x1, -R0 ;
+        /*0be0*/                   SHF.R.S32.HI R36, RZ, 0x1f, R21 ;
+        /*0bf0*/                   LEA.HI.SX32 R18, R18, R19, 0x1c ;
+        /*0c00*/                   LEA.HI R27, R36, R21, RZ, 0x4 ;
+        /*0c10*/                   IMAD.IADD R36, R29, 0x1, -R0 ;
+        /*0c20*/                   SHF.R.S32.HI R21, RZ, 0x1f, R62 ;
+        /*0c30*/                   SHF.R.S32.HI R19, RZ, 0x1f, R26 ;
+        /*0c40*/                   LEA.HI R62, R21, R62, RZ, 0x4 ;
+        /*0c50*/                   IADD3 R21, -R0, -0x3, R5 ;
+        /*0c60*/                   SHF.R.S32.HI R30, RZ, 0x1f, R61 ;
+        /*0c70*/                   LEA.HI R19, R19, R26, RZ, 0x4 ;
+        /*0c80*/                   VIADD R26, R26, 0x4 ;
+        /*0c90*/                   SHF.R.S32.HI R35, RZ, 0x1f, R21 ;
+        /*0ca0*/                   LEA.HI R61, R30, R61, RZ, 0x4 ;
+        /*0cb0*/                   LEA.HI.SX32 R19, R19, R20, 0x1c ;
+        /*0cc0*/                   SHF.R.S32.HI R30, RZ, 0x1f, R40 ;
+        /*0cd0*/                   LOP3.LUT R20, R35, 0xf, RZ, 0xc0, !PT ;
+        /*0ce0*/                   LOP3.LUT R31, R30, 0xf, RZ, 0xc0, !PT ;
+        /*0cf0*/                   IADD3 R30, -R0, -0x5, RZ ;
+        /*0d00*/                   IMAD.IADD R41, R21, 0x1, -R20 ;
+        /*0d10*/                   SHF.R.S32.HI R35, RZ, 0x1f, R26 ;
+        /*0d20*/                   IMAD.IADD R31, R40, 0x1, -R31 ;
+        /*0d30*/                   LEA.HI.SX32 R20, R37, R30, 0x1c ;
+        /*0d40*/                   LEA.HI R26, R35, R26, RZ, 0x4 ;
+        /*0d50*/                   VIADD R35, R32, 0xfffffffc ;
+        /*0d60*/                   SHF.R.S32.HI R30, RZ, 0x1f, R41 ;
+        /*0d70*/                   SHF.R.S32.HI R44, RZ, 0x1f, R31 ;
+        /*0d80*/                   LEA.HI R41, R30, R41, RZ, 0x4 ;
+        /*0d90*/                   SHF.R.S32.HI R30, RZ, 0x1f, R39 ;
+        /*0da0*/                   SHF.R.S32.HI R29, RZ, 0x1f, R35 ;
+        /*0db0*/                   LEA.HI R44, R44, R31, RZ, 0x4 ;
+        /*0dc0*/                   VIADD R31, R32.reuse, 0xfffffffe ;
+        /*0dd0*/                   SHF.R.S32.HI R37, RZ, 0x1f, R36 ;
+        /*0de0*/                   VIADD R32, R32, 0xfffffffa ;
+        /*0df0*/                   LOP3.LUT R38, R30, 0xf, RZ, 0xc0, !PT ;
+        /*0e00*/                   LOP3.LUT R30, R29, 0xf, RZ, 0xc0, !PT ;
+        /*0e10*/                   LOP3.LUT R43, R37, 0xf, RZ, 0xc0, !PT ;
+        /*0e20*/                   IMAD.IADD R38, R39, 0x1, -R38 ;
+        /*0e30*/                   SHF.R.S32.HI R37, RZ, 0x1f, R31 ;
+        /*0e40*/                   IMAD.IADD R30, R35, 0x1, -R30 ;
+        /*0e50*/                   LOP3.LUT R48, R41, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*0e60*/                   IMAD.IADD R45, R36, 0x1, -R43 ;
+        /*0e70*/                   LOP3.LUT R42, R37, 0xf, RZ, 0xc0, !PT ;
+        /*0e80*/                   SHF.R.S32.HI R43, RZ, 0x1f, R38 ;
+        /*0e90*/                   SHF.R.S32.HI R29, RZ, 0x1f, R30 ;
+        /*0ea0*/                   IMAD.IADD R42, R31, 0x1, -R42 ;
+        /*0eb0*/                   LEA.HI R43, R43, R38, RZ, 0x4 ;
+        /*0ec0*/                   SHF.R.S32.HI R46, RZ, 0x1f, R45 ;
+        /*0ed0*/                   LEA.HI R38, R29, R30, RZ, 0x4 ;
+        /*0ee0*/                   LOP3.LUT R29, RZ, R5, RZ, 0x33, !PT ;
+        /*0ef0*/                   LEA.HI R37, R46, R45, RZ, 0x4 ;
+        /*0f00*/                   SHF.R.S32.HI R47, RZ, 0x1f, R42 ;
+        /*0f10*/                   IMAD.IADD R29, R29, 0x1, R0 ;
+        /*0f20*/                   SHF.R.S32.HI R45, RZ, 0x4, R44 ;
+        /*0f30*/                   LEA.HI R30, R47, R42, RZ, 0x4 ;
+        /*0f40*/                   IADD3 R42, -R0, 0x12, -R5 ;
+        /*0f50*/                   IMAD R55, R45, -0x10, R40 ;
+        /*0f60*/                   SHF.R.S32.HI R40, RZ, 0x1f, R29 ;
+        /*0f70*/                   SHF.R.S32.HI R46, RZ, 0x1f, R32 ;
+        /*0f80*/                   IMAD R45, R3, 0x2, R42 ;
+        /*0f90*/                   LOP3.LUT R44, R44, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*0fa0*/                   IADD3 R47, -R0, 0x12, R5 ;
+        /*0fb0*/                   LOP3.LUT R40, R40, 0xf, RZ, 0xc0, !PT ;
+        /*0fc0*/                   IMAD.IADD R45, R45, 0x1, R44 ;
+        /*0fd0*/                   LOP3.LUT R49, R46, 0xf, RZ, 0xc0, !PT ;
+        /*0fe0*/                   IMAD.IADD R46, R44, 0x1, R47 ;
+        /*0ff0*/                   SHF.R.S32.HI R56, RZ, 0x4, R38 ;
+        /*1000*/                   IMAD.IADD R44, R29, 0x1, -R40 ;
+        /*1010*/                   SHF.R.S32.HI R40, RZ, 0x4, R41 ;
+        /*1020*/                   VIADD R47, R5, 0xc ;
+        /*1030*/                   LOP3.LUT R55, R55, R45, R46, 0xfe, !PT ;
+        /*1040*/                   IMAD.IADD R49, R32, 0x1, -R49 ;
+        /*1050*/                   SHF.R.S32.HI R41, RZ, 0x1f, R44 ;
+        /*1060*/                   IMAD R21, R40, -0x10, R21 ;
+        /*1070*/                   IADD3 R48, R48, R47, R0 ;
+        /*1080*/                   IMAD R56, R56, -0x10, R35 ;
+        /*1090*/                   LEA.HI R41, R41, R44, RZ, 0x4 ;
+        /*10a0*/                   SHF.R.S32.HI R44, RZ, 0x4, R43 ;
+        /*10b0*/                   IADD3 R46, -R0, 0xe, R5 ;
+        /*10c0*/                   LOP3.LUT R43, R43, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*10d0*/                   IMAD R39, R44, -0x10, R39 ;
+        /*10e0*/                   LOP3.LUT R21, R23, R48, R21, 0xfe, !PT ;
+        /*10f0*/                   LOP3.LUT R23, R28, R23, R58, 0xfe, !PT ;
+        /*1100*/                   IMAD.IADD R44, R43, 0x1, R46 ;
+        /*1110*/                   IADD3 R46, R0, 0x1f, -R5 ;
+        /*1120*/                   IMAD.IADD R42, R42, 0x1, R43 ;
+        /*1130*/                   LOP3.LUT R23, R22, R23, R13, 0xfe, !PT ;
+        /*1140*/                   SHF.R.S32.HI R50, RZ, 0x1f, R49 ;
+        /*1150*/                   IMAD R45, R3, -0x2, R46 ;
+        /*1160*/                   SHF.R.S32.HI R43, RZ, 0x4, R37 ;
+        /*1170*/                   LOP3.LUT R22, R34.reuse, R22, R33.reuse, 0xfe, !PT ;
+        /*1180*/                   LOP3.LUT R23, R34, R23, R33, 0xfe, !PT ;
+        /*1190*/                   IMAD R36, R43, -0x10, R36 ;
+        /*11a0*/                   LOP3.LUT R34, R33, 0x80000000, R34, 0xc8, !PT ;
+        /*11b0*/                   LEA.HI R40, R50, R49, RZ, 0x4 ;
+        /*11c0*/                   IADD3 R33, -R0, 0x11, R5 ;
+        /*11d0*/                   LOP3.LUT R46, R38, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*11e0*/                   SHF.R.S32.HI R48, RZ, 0x4, R30 ;
+        /*11f0*/                   LOP3.LUT R35, R30, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*1200*/                   IMAD.IADD R33, R33, 0x1, R46 ;
+        /*1210*/                   LOP3.LUT R30, R13, 0x80000000, R58, 0xc8, !PT ;
+        /*1220*/                   IMAD R53, R48, -0x10, R31 ;
+        /*1230*/                   IADD3 R47, R0, 0xd, R5 ;
+        /*1240*/                   LOP3.LUT R50, R37, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*1250*/                   P2R R69, PR, RZ, 0x4 ;
+        /*1260*/                   SHF.R.S32.HI R43, RZ, 0x4, R40 ;
+        /*1270*/                   IMAD.IADD R37, R50, 0x1, R47 ;
+        /*1280*/                   LOP3.LUT P2, RZ, R30, R3, RZ, 0xfc, !PT ;
+        /*1290*/                   IMAD.IADD R38, R45, 0x1, R50 ;
+        /*12a0*/                   IADD3 R46, -R0, 0xf, R5 ;
+        /*12b0*/                   IMAD R47, R43, -0x10, R32 ;
+        /*12c0*/                   ISETP.GT.AND P2, PT, R5, 0x3, !P2 ;
+        /*12d0*/                   IADD3 R43, -R0, 0x15, -R5 ;
+        /*12e0*/                   IMAD R45, R3, 0x2, R46 ;
+        /*12f0*/                   LOP3.LUT R40, R40, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*1300*/                   ISETP.GT.AND P2, PT, R24, -0x1, P2 ;
+        /*1310*/                   LOP3.LUT R36, R36, R38, R37, 0xfe, !PT ;
+        /*1320*/                   IMAD.IADD R43, R43, 0x1, R40 ;
+        /*1330*/                   IADD3 R32, -R0, 0x11, -R5 ;
+        /*1340*/                   IMAD.IADD R54, R40, 0x1, R45 ;
+        /*1350*/                   LOP3.LUT R40, R13, 0x80000000, R24, 0xc8, !PT ;
+        /*1360*/                   IADD3 R31, -R0, 0x14, -R5 ;
+        /*1370*/                   IMAD.IADD R32, R32, 0x1, R35 ;
+        /*1380*/                   LOP3.LUT R30, R41, 0xfffffff0, RZ, 0xc0, !PT ;
+        /*1390*/                   IMAD.IADD R35, R35, 0x1, R46 ;
+        /*13a0*/                   P2R R70, PR, RZ, 0x4 ;
+        /*13b0*/                   SHF.R.S32.HI R24, RZ, 0x4, R41 ;
+        /*13c0*/                   IMAD.IADD R31, R30, 0x1, R31 ;
+        /*13d0*/                   ISETP.LT.OR P2, PT, R36, RZ, P4 ;
+        /*13e0*/                   LOP3.LUT R28, R28, R59, R3, 0xfe, !PT ;
+        /*13f0*/                   IMAD.IADD R59, R59, 0x1, -R0 ;
+        /*1400*/                   P2R R68, PR, RZ, 0x4 ;
+        /*1410*/                   IMAD R52, R24, -0x10, R29 ;
+        /*1420*/                   P2R R71, PR, RZ, 0x8 ;
+        /*1430*/                   ISETP.GT.AND P2, PT, R5, RZ, PT ;
+        /*1440*/                   LOP3.LUT R39, R39, R42, R44, 0xfe, !PT ;
+        /*1450*/                   ISETP.GT.AND P3, PT, R5, 0x3, PT ;
+        /*1460*/                   LEA.HI.SX32 R63, R26, R59, 0x1c ;
+        /*1470*/                   LOP3.LUT R57, R58, R31, R52, 0xfe, !PT ;
+        /*1480*/                   P2R R26, PR, RZ, 0x4 ;
+        /*1490*/                   LOP3.LUT R25, R34, R40, R25, 0xfe, !PT ;
+        /*14a0*/                   LOP3.LUT R53, R53, R32, R35, 0xfe, !PT ;
+        /*14b0*/                   LOP3.LUT R54, R47, R43, R54, 0xfe, !PT ;
+        /*14c0*/                   LOP3.LUT R55, R28, R55, RZ, 0xfc, !PT ;
+        /*14d0*/                   LOP3.LUT R56, R33, 0x80000000, R56, 0xc8, !PT ;
+        /*14e0*/                   LOP3.LUT R58, R58, R39, RZ, 0xfc, !PT ;
+        /*14f0*/                   LEA.HI.SX32 R61, R61, -R0.reuse, 0x1c ;
+        /*1500*/                   LEA.HI.SX32 R60, R27, -R0, 0x1c ;
+        /*1510*/                   LEA.HI.SX32 R62, R62, R59, 0x1c ;
+        /*1520*/                   P2R R26, PR, RZ, 0x8 ;
+.L_x_16:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*1530*/                   IADD3 R36, -R0.reuse, 0x7d, RZ ;
+        /*1540*/                   VIADD R37, R5.reuse, 0xfffffffe ;
+        /*1550*/                   IADD3 R41, -R5, 0x7d, RZ ;
+        /*1560*/                   IMAD.MOV.U32 R46, RZ, RZ, 0xf0 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 29
+        /*1570*/                   IADD3 R42, -R0, 0x6f, R5 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*1580*/                   IMAD R39, R3, -0x10, R36 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 29
+        /*1590*/                   BAR.SYNC.DEFER_BLOCKING 0x0 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*15a0*/                   VIADD R36, R4, 0xfffffffe ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*15b0*/                   PLOP3.LUT P3, PT, PT, PT, PT, 0x80, 0x0 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*15c0*/                   IMAD R38, R2.reuse, -0x10, R41 ;
+        /*15d0*/                   IMAD R41, R2, 0x10, R37 ;
+        /*15e0*/                   LOP3.LUT R36, R36, R39, RZ, 0xfc, !PT ;
+        /*15f0*/                   VIADD R39, R5, 0xfffffffc ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*1600*/                   BSSY B0, `(.L_x_0) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*1610*/                   IMAD R43, R3, R46, -0x1a ;
+        /*1620*/                   LOP3.LUT R36, R36, R41, R38, 0xfe, !PT ;
+        /*1630*/                   IMAD R38, R2, 0x10, R0 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 29
+        /*1640*/                   IMAD R42, R3, -0x10, R42 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*1650*/                   ISETP.GT.AND P2, PT, R36, -0x1, PT ;
+        /*1660*/                   IMAD.IADD R36, R37, 0x1, R0 ;
+        /*1670*/                   IMAD.IADD R37, R0, 0x1, R5 ;
+        /*1680*/                   FSEL R44, R44, RZ, !P2 ;
+        /*1690*/                   IMAD.IADD R38, R38, 0x1, R39 ;
+        /*16a0*/                   FSEL R45, R45, RZ, !P2 ;
+        /*16b0*/                   IMAD R40, R2, 0x10, R37 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 29
+        /*16c0*/                   ISETP.GT.AND P2, PT, R3, RZ, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*16d0*/                   LOP3.LUT R36, R38, R13, R36, 0xfe, !PT ;
+        /*16e0*/                   IMAD.IADD R38, R39, 0x1, R0 ;
+        /*16f0*/                   ISETP.GT.AND P2, PT, R59, -0x1, P2 ;
+        /*1700*/                   IMAD R41, R3, 0x10, R40 ;
+        /*1710*/                   IMAD R39, R3, 0x10, R38 ;
+        /*1720*/                   ISETP.GT.AND P2, PT, R13, -0x1, P2 ;
+        /*1730*/                   VIADD R41, R41, 0xfffffffa ;
+        /*1740*/                   IMAD R38, R0, 0xd, R43 ;
+        /*1750*/                   ISETP.GT.AND P2, PT, R42, -0x1, P2 ;
+        /*1760*/                   LOP3.LUT R39, R41, R36, R39, 0xfe, !PT ;
+        /*1770*/                   P2R R43, PR, RZ, 0x8 ;
+        /*1780*/                   LOP3.LUT R39, R39, R38, RZ, 0xfc, !PT ;
+        /*1790*/                   ISETP.GT.OR P2, PT, R39, -0x1, P2 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*17a0*/               @P2 BRA `(.L_x_1) ;
+        /*17b0*/                   ISETP.NE.AND P2, PT, R3, RZ, PT ;
+        /*17c0*/                   PLOP3.LUT P3, PT, PT, PT, PT, 0x80, 0x0 ;
+        /*17d0*/                   P2R R43, PR, RZ, 0x8 ;
+        /*17e0*/              @!P2 BRA `(.L_x_2) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*17f0*/                   IADD3 R36, -R0, 0x3, -R5 ;
+        /*1800*/                   VIADD R42, R42, 0xfffffffe ;
+        /*1810*/                   LOP3.LUT R39, R36, R3, RZ, 0xfc, !PT ;
+        /*1820*/                   LOP3.LUT R39, R39, 0x80000000, R42, 0xc8, !PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*1830*/                   LOP3.LUT P2, RZ, R39, R2, RZ, 0xfc, !PT ;
+        /*1840*/                   ISETP.LT.OR P2, PT, R5, 0x2, P2 ;
+        /*1850*/               @P2 BRA `(.L_x_3) ;
+        /*1860*/                   BRA `(.L_x_1) ;
+.L_x_2:
+        /*1870*/                   IADD3 R39, R0.reuse, 0x7d, -R5.reuse ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*1880*/                   VIADD R46, R37, 0xfffffffc ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*1890*/                   IADD3 R42, -R0, 0x6d, R5.reuse ;
+        /*18a0*/                   VIADD R40, R40, 0xfffffffa ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*18b0*/                   IADD3 R36, -R0, 0x3, -R5 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*18c0*/                   IMAD R39, R2, -0x10, R39 ;
+        /*18d0*/                   IADD3 R41, -R0, 0x1, RZ ;
+        /*18e0*/                   IMAD R42, R3, -0x10, R42 ;
+        /*18f0*/                   LOP3.LUT R47, R36, R3, RZ, 0xfc, !PT ;
+        /*1900*/                   LOP3.LUT R39, R39, R46, RZ, 0xfc, !PT ;
+        /*1910*/                   LOP3.LUT R40, R39, R40, R41, 0xfe, !PT ;
+        /*1920*/                   LOP3.LUT R41, R47, 0x80000000, R42, 0xc8, !PT ;
+        /*1930*/                   IADD3 R39, -R0, 0x1, -R5 ;
+        /*1940*/                   LOP3.LUT P2, RZ, R41, R2, RZ, 0xfc, !PT ;
+        /*1950*/                   LOP3.LUT R39, R40, R13, R39, 0xe0, !PT ;
+        /*1960*/                   ISETP.GT.AND P2, PT, R5, 0x1, !P2 ;
+        /*1970*/                   ISETP.GT.OR P2, PT, R39, -0x1, P2 ;
+        /*1980*/               @P2 BRA `(.L_x_1) ;
+.L_x_3:
+        /*1990*/                   LOP3.LUT R40, RZ, R0, RZ, 0x33, !PT ;
+        /*19a0*/                   IADD3 R39, -R0, 0x5, -R5.reuse ;
+        /*19b0*/                   ISETP.NE.AND P3, PT, R64, RZ, PT ;
+        /*19c0*/                   IMAD.IADD R40, R40, 0x1, R5.reuse ;
+        /*19d0*/                   IADD3 R41, -R0, -0xe, R5 ;
+        /*19e0*/                   LOP3.LUT R39, R39, R40, RZ, 0xfc, !PT ;
+        /*19f0*/                   ISETP.GT.AND P2, PT, R39, -0x1, PT ;
+        /*1a00*/                   VIADD R39, R37.reuse, 0xfffffffc ;
+        /*1a10*/                   VIADD R37, R37, 0xfffffffe ;
+        /*1a20*/                   SEL R40, RZ, 0xffffffff, !P2 ;
+        /*1a30*/                   LOP3.LUT R39, R39, 0x80000000, R0, 0xc8, !PT ;
+        /*1a40*/                   ISETP.GT.AND P2, PT, R41, -0x1, P3 ;
+        /*1a50*/                   LOP3.LUT P3, RZ, R39, R3, R2, 0xfe, !PT ;
+        /*1a60*/                   IADD3 R39, -R0, 0x1, R5 ;
+        /*1a70*/                   PLOP3.LUT P3, PT, P2, P3, PT, 0xa8, 0x0 ;
+        /*1a80*/                   LOP3.LUT R36, R36, 0x80000000, R39, 0xc8, !PT ;
+        /*1a90*/                   LOP3.LUT R37, R37, 0x80000000, R0, 0xc8, !PT ;
+        /*1aa0*/               @P3 SEL R40, RZ, 0xffffffff, !P2 ;
+        /*1ab0*/                   LOP3.LUT P2, RZ, R36, R37, R3, 0xfe, !PT ;
+        /*1ac0*/                   LOP3.LUT R40, R40, 0x1, RZ, 0xc0, !PT ;
+        /*1ad0*/                   ISETP.GT.AND P2, PT, R2, RZ, !P2 ;
+        /*1ae0*/                   ISETP.EQ.U32.OR P2, PT, R40, 0x1, P2 ;
+        /*1af0*/                   P2R R43, PR, RZ, 0x4 ;
+.L_x_1:
+        /*1b00*/                   BSYNC B0 ;
+.L_x_0:
+        /*1b10*/                   ISETP.GT.AND P3, PT, R5.reuse, 0x3, PT ;
+        /*1b20*/                   BSSY B0, `(.L_x_4) ;
+        /*1b30*/                   IADD3 R36, -R5.reuse, 0xe, RZ ;
+        /*1b40*/                   ISETP.EQ.AND P3, PT, R2, 0x7, P3 ;
+        /*1b50*/                   ISETP.GT.AND P2, PT, R5, 0x1, PT ;
+        /*1b60*/                   ISETP.GT.AND P5, PT, R36, -0x1, P3 ;
+        /*1b70*/                   IADD3 R37, -R3, 0x6, RZ ;
+        /*1b80*/                   IADD3 R40, -R5, 0x3, RZ ;
+        /*1b90*/                   ISETP.EQ.AND P2, PT, R2, 0x7, P2 ;
+        /*1ba0*/                   ISETP.LT.AND P5, PT, R3, RZ, P5 ;
+        /*1bb0*/                   LOP3.LUT R39, R36, R37, RZ, 0xfc, !PT ;
+        /*1bc0*/                   ISETP.GT.AND P4, PT, R40, -0x1, P2 ;
+        /*1bd0*/                   ISETP.GT.AND P6, PT, R6, -0x1, P5 ;
+        /*1be0*/                   ISETP.GT.AND P5, PT, R39, -0x1, P3 ;
+        /*1bf0*/                   ISETP.LT.AND P4, PT, R3, RZ, P4 ;
+        /*1c00*/                   LOP3.LUT R36, R37, R36, R3, 0xfe, !PT ;
+        /*1c10*/                   LOP3.LUT R39, R40, R37, RZ, 0xfc, !PT ;
+        /*1c20*/                   ISETP.GT.AND P5, PT, R38, -0x1, P5 ;
+        /*1c30*/                   ISETP.GT.AND P4, PT, R6, -0x1, P4 ;
+        /*1c40*/                   ISETP.GT.AND P3, PT, R36, -0x1, P3 ;
+        /*1c50*/                   ISETP.GT.AND P2, PT, R39, -0x1, P2 ;
+        /*1c60*/                   PLOP3.LUT P4, PT, P4, P6, P5, 0xfe, 0x0 ;
+        /*1c70*/                   ISETP.GT.AND P3, PT, R6, -0x1, P3 ;
+        /*1c80*/                   ISETP.GT.AND P2, PT, R38, -0x1, P2 ;
+        /*1c90*/                   IADD3 R42, -R2, 0x6, RZ ;
+        /*1ca0*/                   PLOP3.LUT P3, PT, P3, P4, P2, 0xfe, 0x0 ;
+        /*1cb0*/                   ISETP.GT.AND P2, PT, R42, -0x1, P1 ;
+        /*1cc0*/                   IADD3 R36, -R0.reuse, 0x3, RZ ;
+        /*1cd0*/                   ISETP.GT.AND P2, PT, R0, 0x1, P2 ;
+        /*1ce0*/                   ISETP.NE.AND P6, PT, R65, RZ, PT ;
+        /*1cf0*/                   ISETP.NE.AND P4, PT, R67, RZ, PT ;
+        /*1d00*/                   ISETP.NE.AND P5, PT, R66, RZ, PT ;
+        /*1d10*/                   ISETP.GT.AND P2, PT, R36, -0x1, P2 ;
+        /*1d20*/                   PLOP3.LUT P3, PT, P6, P3, P4, 0xfe, 0x0 ;
+        /*1d30*/                   ISETP.GT.AND P2, PT, R8, -0x1, P2 ;
+        /*1d40*/                   ISETP.GT.AND P4, PT, R9, -0x1, P5 ;
+        /*1d50*/                   IADD3 R36, -R0, 0x1, RZ ;
+        /*1d60*/                   PLOP3.LUT P2, PT, P4, P3, P2, 0xfe, 0x0 ;
+        /*1d70*/                   LOP3.LUT R36, R36, R10, R7, 0xfe, !PT ;
+        /*1d80*/                   ISETP.EQ.AND P3, PT, R5, 0x1, P0 ;
+        /*1d90*/                   ISETP.NE.AND P4, PT, R69, RZ, PT ;
+        /*1da0*/                   ISETP.GT.AND P3, PT, R36, -0x1, P3 ;
+        /*1db0*/                   LOP3.LUT R36, R40, 0x80000000, R42, 0xc8, !PT ;
+        /*1dc0*/                   LOP3.LUT R37, R13, R37, R42, 0xfe, !PT ;
+        /*1dd0*/                   PLOP3.LUT P2, PT, P3, P2, P4, 0xfe, 0x0 ;
+        /*1de0*/                   LOP3.LUT P3, RZ, R36, R3, RZ, 0xfc, !PT ;
+        /*1df0*/                   VIADD R36, R4, 0xfffffffc ;
+        /*1e00*/                   ISETP.GT.AND P4, PT, R5, 0x3, PT ;
+        /*1e10*/                   LOP3.LUT R37, R37, R22, RZ, 0xfc, !PT ;
+        /*1e20*/                   ISETP.GT.AND P3, PT, R5, RZ, !P3 ;
+        /*1e30*/                   ISETP.GT.AND P4, PT, R37, -0x1, P4 ;
+        /*1e40*/                   ISETP.GT.AND P3, PT, R0, 0xa, P3 ;
+        /*1e50*/                   PLOP3.LUT P4, PT, P2, P4, PT, 0xa8, 0x0 ;
+        /*1e60*/                   ISETP.NE.AND P5, PT, R68, RZ, PT ;
+        /*1e70*/                   ISETP.GT.AND P3, PT, R8, -0x1, P3 ;
+        /*1e80*/                   ISETP.GT.OR P4, PT, R23, -0x1, P4 ;
+        /*1e90*/                   IADD3 R37, -R3, 0x7, RZ ;
+        /*1ea0*/                   PLOP3.LUT P3, PT, P3, P4, P5, 0xfd, 0x0 ;
+        /*1eb0*/                   LOP3.LUT R42, R13, R42, RZ, 0xfc, !PT ;
+        /*1ec0*/                   PLOP3.LUT P5, PT, P3, P4, P2, 0x80, 0x0 ;
+        /*1ed0*/                   ISETP.GT.AND P2, PT, R5, RZ, PT ;
+        /*1ee0*/                   LOP3.LUT R36, R37, R36, RZ, 0xfc, !PT ;
+        /*1ef0*/                   ISETP.EQ.AND P2, PT, R2, RZ, P2 ;
+        /*1f00*/                   ISETP.NE.AND P6, PT, R43, RZ, PT ;
+        /*1f10*/                   ISETP.GT.AND P2, PT, R40, -0x1, P2 ;
+        /*1f20*/                   ISETP.GT.AND P4, PT, R0, 0x1, P2 ;
+        /*1f30*/                   ISETP.GT.AND P2, PT, R5, 0x3, PT ;
+        /*1f40*/                   ISETP.GT.AND P4, PT, R36, -0x1, P4 ;
+        /*1f50*/                   ISETP.EQ.AND P2, PT, R3, 0x7, P2 ;
+        /*1f60*/                   ISETP.GT.AND P2, PT, R42, -0x1, P2 ;
+        /*1f70*/                   SEL R42, RZ, 0x1, P6 ;
+        /*1f80*/                   ISETP.GT.AND P2, PT, R14, -0x1, P2 ;
+        /*1f90*/                   PLOP3.LUT P2, PT, P2, P3, P4, 0xfe, 0x0 ;
+        /*1fa0*/                   ISETP.NE.AND P3, PT, R70, RZ, PT ;
+        /*1fb0*/                   ISETP.NE.AND P4, PT, R71, RZ, PT ;
+        /*1fc0*/                   ISETP.GT.AND P3, PT, R14, -0x1, P3 ;
+        /*1fd0*/                   PLOP3.LUT P3, PT, P3, P2, P4, 0xfd, 0x0 ;
+        /*1fe0*/                   PLOP3.LUT P5, PT, P3, P2, P5, 0x80, 0x0 ;
+        /*1ff0*/                   ISETP.EQ.OR P3, PT, R25, RZ, P3 ;
+        /*2000*/                   SEL R37, R15, RZ, !P5 ;
+        /*2010*/                   SEL R37, R37, R16, P3 ;
+        /*2020*/                   ISETP.GT.AND P2, PT, R42, R37, PT ;
+        /*2030*/               @P2 BRA `(.L_x_5) ;
+.L_x_11:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*2040*/                   IADD3 R37, -R0.reuse, 0x30, -R5.reuse ;
+        /*2050*/                   IMAD.IADD R48, R19, 0x1, -R42 ;
+        /*2060*/                   IADD3 R39, -R5.reuse, 0x11, RZ ;
+        /*2070*/                   BSSY B1, `(.L_x_6) ;
+        /*2080*/                   IADD3 R47, -R0, 0x10, R5 ;
+        /*2090*/                   IMAD R41, R24, 0x10, R37 ;
+        /*20a0*/                   IADD3 R46, -R5, 0x1, RZ ;
+        /*20b0*/                   IMAD R37, R42.reuse, 0x10, R5 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*20c0*/                   ISETP.GT.AND P2, PT, R3, RZ, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*20d0*/                   IMAD R43, R42.reuse, -0x10, R39 ;
+        /*20e0*/                   ISETP.NE.AND P5, PT, R42.reuse, RZ, PT ;
+        /*20f0*/                   IMAD R36, R42, -0x20, R41 ;
+        /*2100*/                   ISETP.GT.AND P2, PT, R13, -0x1, P2 ;
+        /*2110*/                   IMAD R47, R24, 0x10, R47 ;
+        /*2120*/                   ISETP.GT.AND P3, PT, R46, -0x1, !P5 ;
+        /*2130*/                   VIADD R39, R37, 0xfffffff1 ;
+        /*2140*/                   IADD3 R40, -R3, 0x6, RZ ;
+        /*2150*/                   LOP3.LUT R36, R47, R43, R36, 0xfe, !PT ;
+        /*2160*/                   PLOP3.LUT P3, PT, P2, P3, PT, 0x80, 0x0 ;
+        /*2170*/                   LOP3.LUT R36, R39, R36, R52, 0xfe, !PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*2180*/                   VIADD R39, R5, 0xfffffffe ;
+        /*2190*/                   ISETP.GT.AND P3, PT, R40, -0x1, P3 ;
+        /*21a0*/                   ISETP.GT.AND P2, PT, R36, -0x1, P0 ;
+        /*21b0*/                   IMAD R47, R2, 0x10, R39 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*21c0*/                   IADD3 R39, -R42, 0x7, -R2 ;
+        /*21d0*/                   SEL R41, R48, R17, P2 ;
+        /*21e0*/                   VIADD R48, R37, 0xfffffffe ;
+        /*21f0*/                   LOP3.LUT R46, R13, 0x80000000, R46, 0xc8, !PT ;
+        /*2200*/                   IMAD R36, R42, 0x10, R47 ;
+        /*2210*/                   PLOP3.LUT P3, PT, P2, P3, PT, 0xa8, 0x0 ;
+        /*2220*/                   LOP3.LUT R48, R39, R48, R43, 0xfe, !PT ;
+        /*2230*/                   VIADD R39, R36, 0xfffffffe ;
+        /*2240*/                   ISETP.EQ.AND P5, PT, R3, 0x7, !P5 ;
+        /*2250*/                   IADD3 R47, R0, 0x11, -R5 ;
+        /*2260*/                   LOP3.LUT R48, R48, R39, R40, 0xfe, !PT ;
+        /*2270*/                   LOP3.LUT R39, R42, R46, R3, 0xfe, !PT ;
+        /*2280*/                   ISETP.GT.AND P2, PT, R48, -0x1, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2290*/                   IADD3 R46, -R5, 0x2, RZ ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*22a0*/                   SEL R50, R18, R63, P2 ;
+        /*22b0*/                   LOP3.LUT P2, RZ, R56, R39, RZ, 0xfc, !PT ;
+        /*22c0*/                   IADD3 R39, -R5, 0x3, RZ ;
+        /*22d0*/                   PLOP3.LUT P2, PT, P3, P2, PT, 0xa2, 0x0 ;
+        /*22e0*/                   ISETP.NE.AND P3, PT, R42, 0x1, PT ;
+        /*22f0*/                   LOP3.LUT R43, R39, 0x80000000, R3, 0xc8, !PT ;
+        /*2300*/                   ISETP.EQ.AND P4, PT, R3, 0x7, !P3 ;
+        /*2310*/                   ISETP.EQ.AND P6, PT, R2, 0x7, !P3 ;
+        /*2320*/                   ISETP.GT.AND P4, PT, R5, RZ, P4 ;
+        /*2330*/                   ISETP.GT.AND P6, PT, R55, -0x1, P6 ;
+        /*2340*/                   ISETP.GT.AND P4, PT, R58, -0x1, P4 ;
+        /*2350*/                   ISETP.LT.OR P5, PT, R46, RZ, !P5 ;
+        /*2360*/                   PLOP3.LUT P4, PT, P6, P2, P4, 0xfe, 0x0 ;
+        /*2370*/                   LOP3.LUT P6, RZ, R43, R42, R2, 0xfe, !PT ;
+        /*2380*/                   ISETP.LT.OR P5, PT, R2, 0x1, P5 ;
+        /*2390*/                   ISETP.GT.AND P6, PT, R5, 0x1, !P6 ;
+        /*23a0*/                   ISETP.LT.OR P5, PT, R53, RZ, P5 ;
+        /*23b0*/                   ISETP.GT.AND P6, PT, R40, -0x1, P6 ;
+        /*23c0*/                   IADD3 R46, -R2, 0x6, RZ ;
+        /*23d0*/                   ISETP.LT.OR P6, PT, R54, RZ, !P6 ;
+        /*23e0*/               @P4 SEL R50, R41, R62, P2 ;
+        /*23f0*/                   PLOP3.LUT P5, PT, P5, P6, PT, 0x80, 0x0 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2400*/                   ISETP.GT.AND P6, PT, R5, 0x1, PT ;
+        /*2410*/                   ISETP.EQ.AND P3, PT, R3, RZ, !P3 ;
+        /*2420*/                   ISETP.EQ.AND P2, PT, R42, 0x1, P6 ;
+        /*2430*/                   ISETP.GT.AND P3, PT, R5, 0x1, P3 ;
+        /*2440*/                   ISETP.GT.AND P2, PT, R46, -0x1, P2 ;
+        /*2450*/                   ISETP.GT.AND P3, PT, R57, -0x1, P3 ;
+        /*2460*/                   ISETP.GT.AND P2, PT, R3, RZ, P2 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*2470*/                   IADD3 R43, R0, 0x7f, -R5 ;
+        /*2480*/                   ISETP.GT.AND P2, PT, R40, -0x1, P2 ;
+        /*2490*/                   IMAD R43, R2, -0x10, R43 ;
+        /*24a0*/                   ISETP.GT.OR P2, PT, R48, -0x1, P2 ;
+        /*24b0*/                   IMAD R48, R42.reuse, -0x10, R47 ;
+        /*24c0*/                   IMAD R43, R42, -0x10, R43 ;
+        /*24d0*/                   PLOP3.LUT P2, PT, P4, P2, PT, 0xa8, 0x0 ;
+        /*24e0*/                   PLOP3.LUT P3, PT, P2, P3, PT, 0xa8, 0x0 ;
+        /*24f0*/                   SEL R41, R50, R63, P2 ;
+        /*2500*/                   LOP3.LUT P2, RZ, R42, R2, RZ, 0xfc, !PT ;
+        /*2510*/                   LOP3.LUT R43, R43, R48, RZ, 0xfc, !PT ;
+        /*2520*/                   ISETP.EQ.AND P2, PT, R3, 0x7, !P2 ;
+        /*2530*/                   SEL R41, R41, R60, P3 ;
+        /*2540*/                   ISETP.GT.AND P2, PT, R5, 0x1, P2 ;
+        /*2550*/                   ISETP.GT.AND P2, PT, R21, -0x1, P2 ;
+        /*2560*/                   PLOP3.LUT P2, PT, P3, P2, PT, 0xa8, 0x0 ;
+        /*2570*/                   ISETP.GT.AND P3, PT, R43, -0x1, PT ;
+        /*2580*/              @!P2 SEL R41, R20, R61, P5 ;
+        /*2590*/              @!P3 PLOP3.LUT P2, PT, PT, PT, PT, 0x8, 0x0 ;
+        /*25a0*/              @!P3 BRA `(.L_x_7) ;
+        /*25b0*/                   IMAD.IADD R43, R0, 0x1, R5 ;
+        /*25c0*/                   PLOP3.LUT P2, PT, PT, PT, PT, 0x8, 0x0 ;
+        /*25d0*/                   IMAD R47, R42, 0x10, R43 ;
+        /*25e0*/                   VIADD R47, R47, 0xfffffffe ;
+        /*25f0*/                   ISETP.GE.AND P3, PT, R47, RZ, PT ;
+        /*2600*/              @!P3 BRA `(.L_x_7) ;
+        /*2610*/                   IADD3 R47, R0.reuse, 0x7d, -R5.reuse ;
+        /*2620*/                   IADD3 R50, R0, 0xf, -R5 ;
+        /*2630*/                   IMAD R48, R2, -0x10, R47 ;
+        /*2640*/                   IMAD R51, R3.reuse, 0x10, R50 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2650*/                   IMAD R47, R42, 0x10, R5 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*2660*/                   IMAD R50, R2, 0x10, R43 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*2670*/                   IMAD R49, R3, 0x10, R48 ;
+        /*2680*/                   VIADD R47, R47, 0xfffffffc ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*2690*/                   IMAD R48, R2, 0x10, R0 ;
+        /*26a0*/                   IMAD R43, R3, 0x10, R50 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*26b0*/                   IMAD R51, R42.reuse, -0x10, R51 ;
+        /*26c0*/                   IMAD R49, R42, -0x10, R49 ;
+        /*26d0*/                   IMAD.IADD R48, R48, 0x1, R47 ;
+        /*26e0*/                   IMAD R43, R42, 0x10, R43 ;
+        /*26f0*/                   IMAD.IADD R47, R4, 0x1, R47 ;
+        /*2700*/                   LOP3.LUT R48, R51, R48, R49, 0xfe, !PT ;
+        /*2710*/                   VIADD R43, R43, 0xfffffffa ;
+        /*2720*/                   LOP3.LUT R43, R43, R48, R47, 0xfe, !PT ;
+        /*2730*/                   LOP3.LUT R43, R43, R38, RZ, 0xfc, !PT ;
+        /*2740*/                   ISETP.GT.AND P2, PT, R43, -0x1, PT ;
+.L_x_7:
+        /*2750*/                   BSYNC B1 ;
+.L_x_6:
+        /*2760*/                   SEL R48, RZ, 0x1, P2 ;
+        /*2770*/                   IMAD R43, R11, 0x20, R12 ;
+        /*2780*/                   BSSY B1, `(.L_x_8) ;
+        /*2790*/                   ISETP.GT.AND P2, PT, R48, R41, PT ;
+        /*27a0*/                   IMAD R43, R36, 0x4000, R43 ;
+        /*27b0*/               @P2 BRA `(.L_x_9) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 32
+        /*27c0*/                   S2R R36, SR_CgaCtaId ;
+        /*27d0*/                   MOV R49, 0x400 ;
+        /*27e0*/                   IMAD R47, R37, 0x14, R0 ;
+        /*27f0*/                   VIADD R51, R4, 0xfffffffe ;
+        /*2800*/                   LEA R49, R36, R49, 0x18 ;
+.L_x_10:
+        /*2810*/                   LDC.64 R36, c[0x0][0x210] ;
+        /*2820*/                   IMAD R50, R48, 0x10, R51 ;
+        /*2830*/                   IMAD R73, R50, 0x80, R43 ;
+        /*2840*/                   IMAD.WIDE R36, R73, 0x8, R36 ;
+        /*2850*/                   LDG.E.64.CONSTANT R36, desc[UR6][R36.64] ;
+        /*2860*/                   IMAD R50, R48.reuse, 0x10, R47 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*2870*/                   VIADD R48, R48, 0x1 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 32
+        /*2880*/                   IMAD R73, R50, 0x8, R49 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*2890*/                   ISETP.GT.AND P2, PT, R48, R41, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 32
+        /*28a0*/                   STS.64 [R73], R36 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*28b0*/              @!P2 BRA `(.L_x_10) ;
+.L_x_9:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*28c0*/                   BSYNC B1 ;
+.L_x_8:
+        /*28d0*/                   ISETP.GT.AND P2, PT, R5.reuse, 0x3, PT ;
+        /*28e0*/                   VIADD R42, R42, 0x1 ;
+        /*28f0*/                   ISETP.GT.AND P3, PT, R5.reuse, 0x1, PT ;
+        /*2900*/                   IADD3 R37, -R5, 0xe, RZ ;
+        /*2910*/                   ISETP.EQ.AND P2, PT, R2.reuse, 0x7, P2 ;
+        /*2920*/                   ISETP.EQ.AND P3, PT, R2, 0x7, P3 ;
+        /*2930*/                   LOP3.LUT R41, R37, R40, RZ, 0xfc, !PT ;
+        /*2940*/                   ISETP.GT.AND P5, PT, R37, -0x1, P2 ;
+        /*2950*/                   ISETP.GT.AND P4, PT, R39, -0x1, P3 ;
+        /*2960*/                   ISETP.GT.AND P6, PT, R41, -0x1, P2 ;
+        /*2970*/                   ISETP.LT.AND P5, PT, R3.reuse, RZ, P5 ;
+        /*2980*/                   ISETP.LT.AND P4, PT, R3, RZ, P4 ;
+        /*2990*/                   LOP3.LUT R41, R39, R40, RZ, 0xfc, !PT ;
+        /*29a0*/                   LOP3.LUT R37, R40, R37, R3, 0xfe, !PT ;
+        /*29b0*/                   ISETP.GT.AND P5, PT, R6, -0x1, P5 ;
+        /*29c0*/                   ISETP.GT.AND P6, PT, R38, -0x1, P6 ;
+        /*29d0*/                   ISETP.GT.AND P4, PT, R6, -0x1, P4 ;
+        /*29e0*/                   ISETP.GT.AND P3, PT, R41, -0x1, P3 ;
+        /*29f0*/                   ISETP.GT.AND P2, PT, R37, -0x1, P2 ;
+        /*2a00*/                   PLOP3.LUT P4, PT, P4, P5, P6, 0xfe, 0x0 ;
+        /*2a10*/                   ISETP.GT.AND P3, PT, R38, -0x1, P3 ;
+        /*2a20*/                   ISETP.GT.AND P2, PT, R6, -0x1, P2 ;
+        /*2a30*/                   IADD3 R37, -R0, 0x3, RZ ;
+        /*2a40*/                   PLOP3.LUT P3, PT, P2, P4, P3, 0xfe, 0x0 ;
+        /*2a50*/                   ISETP.GT.AND P2, PT, R46, -0x1, P1 ;
+        /*2a60*/                   P2R R36, PR, RZ, 0x1 ;
+        /*2a70*/                   ISETP.GT.AND P2, PT, R0, 0x1, P2 ;
+        /*2a80*/                   ISETP.NE.AND P0, PT, R67, RZ, PT ;
+        /*2a90*/                   ISETP.NE.AND P4, PT, R65, RZ, PT ;
+        /*2aa0*/                   ISETP.NE.AND P5, PT, R66, RZ, PT ;
+        /*2ab0*/                   ISETP.GT.AND P2, PT, R37, -0x1, P2 ;
+        /*2ac0*/                   PLOP3.LUT P3, PT, P4, P3, P0, 0xfe, 0x0 ;
+        /*2ad0*/                   ISETP.GT.AND P2, PT, R8, -0x1, P2 ;
+        /*2ae0*/                   ISETP.NE.AND P0, PT, R36, RZ, PT ;
+        /*2af0*/                   ISETP.GT.AND P4, PT, R9, -0x1, P5 ;
+        /*2b00*/                   IADD3 R36, -R0, 0x1, RZ ;
+        /*2b10*/                   PLOP3.LUT P2, PT, P4, P3, P2, 0xfe, 0x0 ;
+        /*2b20*/                   LOP3.LUT R36, R36, R10, R7, 0xfe, !PT ;
+        /*2b30*/                   ISETP.EQ.AND P3, PT, R5, 0x1, P0 ;
+        /*2b40*/                   ISETP.NE.AND P6, PT, R69, RZ, PT ;
+        /*2b50*/                   ISETP.GT.AND P3, PT, R36, -0x1, P3 ;
+        /*2b60*/                   LOP3.LUT R36, R39, 0x80000000, R46.reuse, 0xc8, !PT ;
+        /*2b70*/                   LOP3.LUT R37, R13, R40, R46, 0xfe, !PT ;
+        /*2b80*/                   PLOP3.LUT P2, PT, P3, P2, P6, 0xfe, 0x0 ;
+        /*2b90*/                   LOP3.LUT P3, RZ, R36, R3, RZ, 0xfc, !PT ;
+        /*2ba0*/                   VIADD R36, R4, 0xfffffffc ;
+        /*2bb0*/                   ISETP.GT.AND P4, PT, R5, 0x3, PT ;
+        /*2bc0*/                   LOP3.LUT R37, R37, R22, RZ, 0xfc, !PT ;
+        /*2bd0*/                   ISETP.GT.AND P3, PT, R5, RZ, !P3 ;
+        /*2be0*/                   ISETP.GT.AND P4, PT, R37, -0x1, P4 ;
+        /*2bf0*/                   ISETP.GT.AND P3, PT, R0, 0xa, P3 ;
+        /*2c00*/                   PLOP3.LUT P4, PT, P2, P4, PT, 0xa8, 0x0 ;
+        /*2c10*/                   ISETP.NE.AND P5, PT, R68, RZ, PT ;
+        /*2c20*/                   ISETP.GT.AND P3, PT, R8, -0x1, P3 ;
+        /*2c30*/                   ISETP.GT.OR P4, PT, R23, -0x1, P4 ;
+        /*2c40*/                   IADD3 R37, -R3, 0x7, RZ ;
+        /*2c50*/                   PLOP3.LUT P3, PT, P3, P4, P5, 0xfd, 0x0 ;
+        /*2c60*/                   ISETP.GT.AND P5, PT, R5.reuse, RZ, PT ;
+        /*2c70*/                   PLOP3.LUT P2, PT, P3, P4, P2, 0x80, 0x0 ;
+        /*2c80*/                   ISETP.EQ.AND P5, PT, R2, RZ, P5 ;
+        /*2c90*/                   ISETP.GT.AND P4, PT, R5, 0x3, PT ;
+        /*2ca0*/                   ISETP.GT.AND P5, PT, R39, -0x1, P5 ;
+        /*2cb0*/                   LOP3.LUT R46, R13, R46, RZ, 0xfc, !PT ;
+        /*2cc0*/                   ISETP.EQ.AND P4, PT, R3, 0x7, P4 ;
+        /*2cd0*/                   LOP3.LUT R36, R37, R36, RZ, 0xfc, !PT ;
+        /*2ce0*/                   ISETP.GT.AND P4, PT, R46, -0x1, P4 ;
+        /*2cf0*/                   ISETP.GT.AND P5, PT, R0, 0x1, P5 ;
+        /*2d00*/                   ISETP.GT.AND P4, PT, R14, -0x1, P4 ;
+        /*2d10*/                   ISETP.GT.AND P5, PT, R36, -0x1, P5 ;
+        /*2d20*/                   ISETP.NE.AND P6, PT, R71, RZ, PT ;
+        /*2d30*/                   PLOP3.LUT P4, PT, P4, P3, P5, 0xfe, 0x0 ;
+        /*2d40*/                   ISETP.NE.AND P5, PT, R70, RZ, PT ;
+        /*2d50*/                   ISETP.GT.AND P3, PT, R14, -0x1, P5 ;
+        /*2d60*/                   PLOP3.LUT P3, PT, P3, P4, P6, 0xfd, 0x0 ;
+        /*2d70*/                   PLOP3.LUT P2, PT, P3, P4, P2, 0x80, 0x0 ;
+        /*2d80*/                   ISETP.EQ.OR P3, PT, R25, RZ, P3 ;
+        /*2d90*/                   SEL R37, R15, RZ, !P2 ;
+        /*2da0*/                   SEL R37, R37, R16, P3 ;
+        /*2db0*/                   ISETP.GT.AND P2, PT, R42, R37, PT ;
+        /*2dc0*/              @!P2 BRA `(.L_x_11) ;
+.L_x_5:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 31
+        /*2dd0*/                   BSYNC B0 ;
+.L_x_4:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*2de0*/                   IADD3 R36, -R0, 0x7d, RZ ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2df0*/                   IMAD R73, R2.reuse, 0x10, R5 ;
+        /*2e00*/                   IADD3 R37, -R5, 0x7d, RZ ;
+        /*2e10*/                   BSSY B0, `(.L_x_12) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*2e20*/                   IMAD R39, R3, -0x10, R36 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2e30*/                   IMAD R38, R2, -0x10, R37 ;
+        /*2e40*/                   VIADD R36, R73, 0xfffffffe ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 27
+        /*2e50*/                   VIADD R37, R4, 0xfffffffe ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2e60*/                   LOP3.LUT R36, R38, R39, R36, 0xfe, !PT ;
+        /*2e70*/                   LOP3.LUT R36, R36, R37, RZ, 0xfc, !PT ;
+        /*2e80*/                   ISETP.GE.AND P2, PT, R36, RZ, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 33
+        /*2e90*/              @!P2 BRA `(.L_x_13) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 35
+        /*2ea0*/                   IMAD R36, R11, 0x20, R12 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2eb0*/                   IMAD R42, R73, 0x80, R4 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 35
+        /*2ec0*/                   VIADD R36, R36, 0xfffffffd ;
+        /*2ed0*/                   ISETP.GT.AND P3, PT, R36, -0x1, PT ;
+        /*2ee0*/                   ISETP.NE.AND P3, PT, R12, RZ, P3 ;
+        /*2ef0*/                   FSEL R29, R27, R29, P3 ;
+        /*2f00*/                   FSEL R28, R26, R28, P3 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 46
+        /*2f10*/                   FSEL R27, R31, R27, P3 ;
+        /*2f20*/                   FSEL R26, R30, R26, P3 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 57
+        /*2f30*/                   FSEL R31, R33, R31, P3 ;
+        /*2f40*/                   FSEL R30, R32, R30, P3 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 68
+        /*2f50*/                   FSEL R32, R34, R32, P3 ;
+        /*2f60*/                   FSEL R33, R35, R33, P3 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2f70*/                   LDC.64 R34, c[0x0][0x210] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 41
+        /*2f80*/                   ISETP.NE.AND P3, PT, R12, 0x2, PT ;
+        /*2f90*/                   ISETP.EQ.AND P3, PT, R11, RZ, !P3 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*2fa0*/               @P3 IMAD.SHL.U32 R41, R42.reuse, 0x80, RZ ;
+        /*2fb0*/               @P3 IMAD.SHL.U32 R39, R42.reuse, 0x80, RZ ;
+        /*2fc0*/               @P3 IMAD.SHL.U32 R37, R42.reuse, 0x80, RZ ;
+        /*2fd0*/               @P3 IMAD.SHL.U32 R47, R42, 0x80, RZ ;
+        /*2fe0*/               @P3 IMAD.WIDE R40, R41, 0x8, R34 ;
+        /*2ff0*/               @P3 IMAD.WIDE R38, R39, 0x8, R34.reuse ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 42
+        /*3000*/               @P3 LDG.E.64.CONSTANT R28, desc[UR6][R40.64] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*3010*/               @P3 IMAD.WIDE R36, R37, 0x8, R34.reuse ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 53
+        /*3020*/               @P3 LDG.E.64.CONSTANT R26, desc[UR6][R38.64+0x8] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*3030*/               @P3 IMAD.WIDE R46, R47, 0x8, R34 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 64
+        /*3040*/               @P3 LDG.E.64.CONSTANT R30, desc[UR6][R36.64+0x10] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 75
+        /*3050*/               @P3 LDG.E.64.CONSTANT R32, desc[UR6][R46.64+0x18] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 35
+        /*3060*/                   ISETP.NE.AND P3, PT, R12, RZ, PT ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*3070*/                   IMAD R49, R42, 0x4, R11 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 82
+        /*3080*/                   IMAD.U32 R46, R49, 0x20, R12 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*3090*/              @!P3 IMAD.SHL.U32 R43, R49.reuse, 0x20, RZ ;
+        /*30a0*/              @!P3 IMAD.SHL.U32 R41, R49.reuse, 0x20, RZ ;
+        /*30b0*/              @!P3 IMAD.SHL.U32 R51, R49.reuse, 0x20, RZ ;
+        /*30c0*/              @!P3 IMAD.SHL.U32 R75, R49, 0x20, RZ ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 82
+        /*30d0*/                   VIADD R47, R46, 0x2 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 30
+        /*30e0*/              @!P3 IMAD.WIDE R42, R43, 0x8, R34 ;
+        /*30f0*/              @!P3 IMAD.WIDE R40, R41, 0x8, R34 ;
+        /*3100*/              @!P3 IMAD.WIDE R38, R51, 0x8, R34 ;
+        /*3110*/              @!P3 IMAD.WIDE R36, R75, 0x8, R34 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 82
+        /*3120*/                   IMAD.WIDE R34, R47, 0x8, R34 ;
+        /*3130*/                   LDG.E.64.CONSTANT R34, desc[UR6][R34.64] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 44
+        /*3140*/              @!P3 LDG.E.64.CONSTANT R28, desc[UR6][R42.64+-0x10] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 55
+        /*3150*/              @!P3 LDG.E.64.CONSTANT R26, desc[UR6][R40.64+-0x8] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 66
+        /*3160*/              @!P3 LDG.E.64.CONSTANT R30, desc[UR6][R38.64] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 77
+        /*3170*/              @!P3 LDG.E.64.CONSTANT R32, desc[UR6][R36.64+0x8] ;
+.L_x_13:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 82
+        /*3180*/                   BSYNC B0 ;
+.L_x_12:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 91
+        /*3190*/                   BAR.SYNC.DEFER_BLOCKING 0x0 ;
+        /*31a0*/                   BSSY B0, `(.L_x_14) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 92
+        /*31b0*/              @!P2 BRA `(.L_x_15) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 95
+        /*31c0*/                   LDC.64 R74, c[0x0][0x220] ;
+        /*31d0*/                   LDG.E.64.CONSTANT R46, desc[UR6][R74.64] ;
+        /*31e0*/                   LDG.E.64.CONSTANT R36, desc[UR6][R74.64+0x8] ;
+        /*31f0*/                   LDG.E.64.CONSTANT R38, desc[UR6][R74.64+0x10] ;
+        /*3200*/                   LDG.E.64.CONSTANT R40, desc[UR6][R74.64+0x18] ;
+        /*3210*/                   LDG.E.64.CONSTANT R42, desc[UR6][R74.64+0x20] ;
+        /*3220*/                   S2UR UR5, SR_CgaCtaId ;
+        /*3230*/                   UMOV UR4, 0x400 ;
+        /*3240*/                   IMAD R72, R5, 0x14, R0 ;
+        /*3250*/                   ULEA UR4, UR5, UR4, 0x18 ;
+        /*3260*/                   LEA R72, R72, UR4, 0x3 ;
+        /*3270*/                   LDS.64 R50, [R72+0x160] ;
+        /*3280*/                   LDS.64 R48, [R72+0x290] ;
+        /*3290*/                   DADD R48, R50, R48 ;
+        /*32a0*/                   LDS.64 R50, [R72+0x150] ;
+        /*32b0*/                   DADD R48, R34, R48 ;
+        /*32c0*/                   DADD R50, R50, R50 ;
+        /*32d0*/                   DADD R50, R30, R50 ;
+        /*32e0*/                   DFMA R44, R48, R46, R44 ;
+        /*32f0*/                   LDS.64 R46, [R72+0x158] ;
+        /*3300*/                   LDS.64 R48, [R72+0x1f0] ;
+        /*3310*/                   DADD R46, R46, R48 ;
+        /*3320*/                   LDS.64 R48, [R72+0x10] ;
+        /*3330*/                   DADD R46, R32, R46 ;
+        /*3340*/                   DFMA R46, R46, R36, R44 ;
+        /*3350*/                   LDS.64 R44, [R72+0x148] ;
+        /*3360*/                   LDS.64 R36, [R72+0x140] ;
+        /*3370*/                   DFMA R46, R50, R38, R46 ;
+        /*3380*/                   LDS.64 R38, [R72+0xb0] ;
+        /*3390*/                   DADD R36, R36, R48 ;
+        /*33a0*/                   IMAD R48, R73, 0x80, R4 ;
+        /*33b0*/                   DADD R44, R44, R38 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 96
+        /*33c0*/                   LDC.64 R38, c[0x0][0x218] ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 95
+        /*33d0*/                   DADD R36, R28, R36 ;
+        /*33e0*/                   DADD R44, R26, R44 ;
+        /*33f0*/                   DFMA R44, R44, R40, R46 ;
+        /*3400*/                   IMAD R41, R48, 0x4, R11 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 96
+        /*3410*/                   IMAD.U32 R41, R41, 0x20, R12 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 95
+        /*3420*/                   DFMA R44, R36, R42, R44 ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 96
+        /*3430*/                   IMAD.WIDE R38, R41, 0x8, R38 ;
+        /*3440*/                   STG.E.64 desc[UR6][R38.64], R44 ;
+.L_x_15:
+        /*3450*/                   BSYNC B0 ;
+.L_x_14:
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 25
+        /*3460*/                   IMAD.MOV.U32 R37, RZ, RZ, 0x1d ;
+        /*3470*/                   ISETP.NE.AND P2, PT, R11, 0x3, PT ;
+        /*3480*/                   VIADD R36, R12, 0x1 ;
+        /*3490*/                   SEL R37, R37, 0x1f, !P2 ;
+        /*34a0*/                   ISETP.GE.U32.AND P2, PT, R12, R37, PT ;
+        /*34b0*/                   IMAD.MOV.U32 R12, RZ, RZ, R36 ;
+        /*34c0*/              @!P2 BRA `(.L_x_16) ;
+	//## File "/home/aja13/shared/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0005_fd25d_compute_n128_sw5_bm16_bn16_bk32_pt16/cuda/loopy_kernel.cu", line 99
+        /*34d0*/                   EXIT ;
+.L_x_17:
+        /*34e0*/                   BRA `(.L_x_17);
+        /*34f0*/                   NOP;
+        /*3500*/                   NOP;
+        /*3510*/                   NOP;
+        /*3520*/                   NOP;
+        /*3530*/                   NOP;
+        /*3540*/                   NOP;
+        /*3550*/                   NOP;
+        /*3560*/                   NOP;
+        /*3570*/                   NOP;
+.L_x_18:
+
+
+//--------------------- SYMBOLS --------------------------
+
+	.type		.nv.reservedSmem.offset0,@object
+	.size		.nv.reservedSmem.offset0,0x4

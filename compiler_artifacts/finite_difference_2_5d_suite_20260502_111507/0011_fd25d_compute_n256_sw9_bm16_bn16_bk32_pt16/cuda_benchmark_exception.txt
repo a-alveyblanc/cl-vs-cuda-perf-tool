@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/shared/home/aja13/cl-vs-cuda-perf/loopy_perf_artifacts.py", line 1232, in run_loopy_perf_case
+    record, _dev_args, _outputs = benchmark_cuda(
+                                  ^^^^^^^^^^^^^^^
+  File "/shared/home/aja13/cl-vs-cuda-perf/loopy_perf_artifacts.py", line 1003, in benchmark_cuda
+    raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem)
+  File "cupy/_core/raw.pyx", line 101, in cupy._core.raw.RawKernel.__call__
+  File "cupy/cuda/function.pyx", line 147, in cupy.cuda.function.Function.__call__
+  File "cupy/cuda/function.pyx", line 129, in cupy.cuda.function._launch
+  File "cupy_backends/cuda/api/driver.pyx", line 273, in cupy_backends.cuda.api.driver.launchKernel
+  File "cupy_backends/cuda/api/driver.pyx", line 63, in cupy_backends.cuda.api.driver.check_status
+cupy_backends.cuda.api.driver.CUDADriverError: CUDA_ERROR_INVALID_HANDLE: invalid resource handle

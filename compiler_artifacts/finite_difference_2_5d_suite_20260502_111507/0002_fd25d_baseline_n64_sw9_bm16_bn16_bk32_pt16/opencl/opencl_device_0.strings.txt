@@ -1,0 +1,43 @@
+poclbin
+JE/OHPNHMMBBOEICNFAPJPJKDNGNKOLLAAIACIHA
+/program.bcl
+0$JY
+oXNO
+0S "
+`HU&N
+`H%+P
+P$v`
+f$c0
+fLg0
+3*6X
+r2H #
+(d<12B
+kernelwchar_sizePIC Levelclang version 19.1.7 (https://github.com/conda-forge/clangdev-feedstock 3c5e7de432e909e225d8040e72a44724afb0c446)loopy_kernel.meta.est.stack.size
+ $f0
+ksI#+s
+nonedouble*restrict constrestrictulap_ucdoubleomnipotent charSimple C/C++ TBAA
+H0bP
+f0KP
+'0bP
+I0PTB
+!8MU
+!8MU
+C-;m
+!8Mu
+,:nC
+!8Me
+C-;n
+2\u^
+!8MU
+Cm[X!0
+C-|n
+,A1b@
+2H1l@
+%((I
+_work_dim_global_offset_x_global_offset_y_global_offset_z.str.str1.str2.str3.str4.str5.str6loopy_kernel_Z12get_group_idj_Z12get_local_idjllvm.fmuladd.f64llvm.nvvm.read.ptx.sreg.tid.xget_nvvm_tid_xllvm.nvvm.read.ptx.sreg.tid.yget_nvvm_tid_yllvm.nvvm.read.ptx.sreg.tid.zget_nvvm_tid_z__nv_frexpffrexpf_f32_i32llvm.nvvm.read.ptx.sreg.ctaid.xget_nvvm_ctaid_xllvm.nvvm.read.ptx.sreg.ctaid.yget_nvvm_ctaid_yllvm.nvvm.read.ptx.sreg.ctaid.zget_nvvm_ctaid_z__nv_frexpfrexp_f64_i3219.1.7 a382b65fa8acaa0a89c62ebf739da268b1e12a3anvptx64/shared/home/aja13/cl-vs-cuda-perf/compiler_artifacts/finite_difference_2_5d_suite_20260502_111507/0000_fd25d_baseline_n64_sw5_bm16_bn16_bk32_pt16/opencl/pocl-cache/tempfile_SVDs8d.cl
+loopy_kernel
+__attribute__((reqd_work_group_size(16, 16, 1 )))
+double*
+lap_u
+double*
+double*

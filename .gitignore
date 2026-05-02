@@ -4,5 +4,6 @@
 summary.md
 artifacts/
 pocl-cache/
+__pycache__/
 
 example-generator.sh

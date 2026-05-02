@@ -46,6 +46,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import time
 import traceback
 from typing import Any, Callable, Iterable, Literal, Mapping, Sequence
 
@@ -968,6 +969,15 @@ def benchmark_cuda(
 
     import cupy as cp  # type: ignore
 
+    # POCL's CUDA backend and CuPy both use the CUDA driver/runtime.  After an
+    # OpenCL/POCL launch, the process' current CUDA context can be different
+    # from CuPy's primary context.  Re-select the CuPy device before creating
+    # modules, arrays, streams, or events.  This avoids many
+    # CUDA_ERROR_INVALID_HANDLE failures when OpenCL and CUDA are benchmarked
+    # in the same Python process.
+    device = cp.cuda.Device()
+    device.use()
+
     cuda_knl = knl.copy(target=lp.CudaTarget())
     device_code = lp.generate_code_v2(cuda_knl).device_code()
     kernel_name = launch.kernel_name or infer_cuda_kernel_name(cuda_knl, device_code)
@@ -992,19 +1002,53 @@ def benchmark_cuda(
     grid = tuple(int(i) for i in _resolve_call_or_value(launch.grid, args))
     block = tuple(int(i) for i in _resolve_call_or_value(launch.block, args))
 
-    for _ in range(nwarmup):
-        raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem)
-    cp.cuda.Device().synchronize()
+    # Use an explicit CuPy stream rather than whatever stream/context another
+    # CUDA-using library may have left current.  If CUDA event timing still
+    # fails, fall back to host-side timing around synchronized kernel launches.
+    stream = cp.cuda.Stream(non_blocking=False)
 
-    start_evt = cp.cuda.Event()
-    end_evt = cp.cuda.Event()
-    start_evt.record()
-    for _ in range(niterations):
-        raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem)
-    end_evt.record()
-    end_evt.synchronize()
+    def launch_once() -> None:
+        raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem, stream=stream)
 
-    total_elapsed_s = cp.cuda.get_elapsed_time(start_evt, end_evt) * 1e-3
+    with stream:
+        for _ in range(nwarmup):
+            launch_once()
+    stream.synchronize()
+    device.synchronize()
+
+    timing_method = "cuda_event"
+    timing_warning: str | None = None
+    try:
+        start_evt = cp.cuda.Event()
+        end_evt = cp.cuda.Event()
+        with stream:
+            start_evt.record(stream)
+            for _ in range(niterations):
+                launch_once()
+            end_evt.record(stream)
+        end_evt.synchronize()
+        total_elapsed_s = cp.cuda.get_elapsed_time(start_evt, end_evt) * 1e-3
+    except Exception as event_exc:
+        # This is primarily a guard for CUDA_ERROR_INVALID_HANDLE from event
+        # handles after POCL/CUDA activity in the same process.  The fallback is
+        # less precise because it includes Python launch overhead, but it keeps
+        # the suite producing a usable GFLOP/s value and records the downgrade in
+        # the benchmark row.
+        timing_method = "host_synchronized_fallback"
+        timing_warning = repr(event_exc)
+        try:
+            stream.synchronize()
+            device.synchronize()
+        except Exception:
+            pass
+        t0 = time.perf_counter()
+        with stream:
+            for _ in range(niterations):
+                launch_once()
+        stream.synchronize()
+        device.synchronize()
+        total_elapsed_s = time.perf_counter() - t0
+
     flops = _resolve_flop_count(flop_count, args)
 
     extra: dict[str, Any] = {
@@ -1014,7 +1058,10 @@ def benchmark_cuda(
         "block": block,
         "shared_mem": int(launch.shared_mem),
         "arg_order": arg_order,
+        "timing_method": timing_method,
     }
+    if timing_warning is not None:
+        extra["timing_warning"] = timing_warning
     try:
         extra["raw_kernel_attributes"] = dict(raw_kernel.attributes)
     except Exception:
