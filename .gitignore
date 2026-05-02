@@ -3,6 +3,7 @@
 
 summary.md
 artifacts/
+compiler_artifacts/
 pocl-cache/
 __pycache__/
 

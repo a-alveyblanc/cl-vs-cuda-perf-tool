@@ -1,6 +1,0 @@
-ptxas info    : 0 bytes gmem
-ptxas info    : Compiling entry function 'loopy_kernel' for 'sm_90'
-ptxas info    : Function properties for loopy_kernel
-    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
-ptxas info    : Used 78 registers, used 1 barriers, 3200 bytes smem
-ptxas info    : Compile time = 22.861 ms
