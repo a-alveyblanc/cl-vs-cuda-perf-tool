@@ -620,11 +620,38 @@ def suspects(summaries: dict[str, dict[str, Any]], pal: Palette) -> list[str]:
     return [pal.red(msg) if score >= 1.5 else pal.yellow(msg) for score, msg in hits[:8]]
 
 
+
+def _flatten_mapping(prefix: str, value: Any, out: dict[str, Any]) -> None:
+    """Flatten JSON-like mappings using dotted keys."""
+    if isinstance(value, dict):
+        for k, v in value.items():
+            key = f"{prefix}.{k}" if prefix else str(k)
+            _flatten_mapping(key, v, out)
+    else:
+        out[prefix] = value
+
+
+def _short_manifest_label(manifest: dict[str, Any] | None) -> str:
+    if not manifest:
+        return ""
+    case = manifest.get("case") or manifest.get("kernel_version") or "-"
+    md = manifest.get("metadata") or {}
+    p = manifest.get("parameters") or {}
+    # Prefer generic loopy_perf_artifacts metadata, but retain the old matmul fields.
+    fields: list[str] = []
+    for container in (md, p):
+        if isinstance(container, dict):
+            for k in ("m", "n", "k", "bm", "bn", "bk", "tm", "tn", "dtype", "variant", "kernel_version"):
+                if k in container and f"{k}=" not in " ".join(fields):
+                    fields.append(f"{k}={container[k]}")
+    for k in ("niterations", "nwarmup"):
+        if k in p:
+            fields.append(f"{k}={p[k]}")
+    return f"case={case}" + ("; " + ", ".join(fields) if fields else "")
+
+
 def params_line(manifest: dict[str, Any] | None) -> str:
-    if not manifest: return ""
-    p = manifest.get("parameters", {})
-    fields = ["m","n","k","bm","bn","bk","tm","tn","dtype","niterations"]
-    return f"kernel={manifest.get('kernel_version','-')}; " + ", ".join(f"{k}={p[k]}" for k in fields if k in p)
+    return _short_manifest_label(manifest)
 
 
 def diagnostic_lines(root: Path, summaries: dict[str, dict[str, Any]], pal: Palette) -> list[str]:
@@ -719,7 +746,7 @@ def render_terminal(payload: dict[str, Any], pal: Palette, top_n: int, print_fil
             for f in s.get("files", []): lines.append(f"  {f}")
         lines.append("")
 
-    lines.append(pal.dim("Tip: use --color always with less -R; POCL metrics are from the run-local opencl/pocl-cache by default."))
+    lines.append(pal.dim("Tip: use --color always with less -R. Use --suite-root plus --plot-metric for multi-run plots."))
     return "\n".join(lines)
 
 
@@ -749,7 +776,7 @@ def write_csv(path: Path, summaries: dict[str, dict[str, Any]]) -> None:
 
 def write_markdown(path: Path, payload: dict[str, Any]) -> None:
     s = payload["summaries"]
-    lines = ["# Compiler artifact summary", "", "| metric | OpenCL | CUDA |", "|---|---:|---:|"]
+    lines = ["# Compiler artifact summary", "", _short_manifest_label(payload.get("manifest")), "", "| metric | OpenCL | CUDA |", "|---|---:|---:|"]
     for key,label,_,_ in METRICS:
         lines.append(f"| {label} | {fmt(s.get('opencl',{}).get(key,''))} | {fmt(s.get('cuda',{}).get(key,''))} |")
     lines.append("")
@@ -765,9 +792,241 @@ def resolve_color(mode: str) -> Palette:
     return Palette(sys.stdout.isatty())
 
 
+# {{{ suite/multi-run support
+
+
+def _has_run_manifest(path: Path) -> bool:
+    return (path / "run_manifest.json").exists() or (path / "run_manifest.pre.json").exists()
+
+
+def discover_run_roots(paths: Iterable[Path], recursive: bool = True) -> list[Path]:
+    """Return artifact run directories, accepting either run dirs or parent dirs."""
+    roots: list[Path] = []
+    seen: set[Path] = set()
+    for raw in paths:
+        p = raw.expanduser().resolve()
+        candidates: list[Path] = []
+        if _has_run_manifest(p):
+            candidates.append(p)
+        elif p.is_dir() and recursive:
+            candidates.extend(sorted({q.parent for q in p.rglob("run_manifest.json")}))
+            candidates.extend(sorted({q.parent for q in p.rglob("run_manifest.pre.json")}))
+        elif p.is_dir():
+            candidates.extend(sorted(child for child in p.iterdir() if child.is_dir() and _has_run_manifest(child)))
+        for c in candidates:
+            c = c.resolve()
+            if c not in seen:
+                seen.add(c)
+                roots.append(c)
+    return sorted(roots, key=lambda x: str(x))
+
+
+def _stringify_cell(value: Any) -> Any:
+    if isinstance(value, (str, int, float)) or value is None:
+        return value
+    if isinstance(value, bool):
+        return value
+    return json.dumps(value, sort_keys=True, default=str)
+
+
+def suite_rows_from_payload(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    """Flatten one analyzed run into one row per backend."""
+    root = Path(payload["artifact_root"])
+    manifest = payload.get("manifest") or {}
+    backend_errors = manifest.get("backend_errors") or {}
+    artifact_errors = manifest.get("artifact_errors") or {}
+    base: dict[str, Any] = {
+        "artifact_root": str(root),
+        "case": manifest.get("case") or manifest.get("kernel_version") or root.name,
+        "created_at": manifest.get("created_at", ""),
+        "run_dir": manifest.get("run_dir", str(root)),
+        "run_status": manifest.get("status", ""),
+        "backend_error_count": len(backend_errors) if isinstance(backend_errors, dict) else 0,
+        "artifact_error_count": len(artifact_errors) if isinstance(artifact_errors, dict) else 0,
+        "backend_errors": json.dumps(backend_errors, sort_keys=True, default=str) if backend_errors else "",
+        "artifact_errors": json.dumps(artifact_errors, sort_keys=True, default=str) if artifact_errors else "",
+    }
+    _flatten_mapping("metadata", manifest.get("metadata") or {}, base)
+    _flatten_mapping("parameters", manifest.get("parameters") or {}, base)
+    # Older matmul_dump_artifacts.py stored shape/tile parameters directly under parameters.
+    # Generic loopy_perf_artifacts.py expects these under metadata, but both are preserved.
+    rows: list[dict[str, Any]] = []
+    for backend, summary in sorted((payload.get("summaries") or {}).items()):
+        if backend not in {"opencl", "cuda"}:
+            continue
+        row = dict(base)
+        row["backend"] = backend
+        if isinstance(backend_errors, dict) and backend in backend_errors:
+            err = backend_errors[backend]
+            if isinstance(err, dict):
+                row["backend_error_type"] = err.get("type", "")
+                row["backend_error_repr"] = err.get("repr", "")
+        if isinstance(artifact_errors, dict) and backend in artifact_errors:
+            err = artifact_errors[backend]
+            if isinstance(err, dict):
+                row["artifact_error_type"] = err.get("type", "")
+                row["artifact_error_repr"] = err.get("repr", "")
+        for key, value in summary.items():
+            if key in {"files", "files_by_kind", "sass_opcode_counts"}:
+                continue
+            row[key] = _stringify_cell(value)
+        rows.append(row)
+    return rows
+
+
+def build_suite_payload(
+    roots: Iterable[Path],
+    *,
+    all_opencl_artifacts: bool = False,
+    opencl_primary_ptx: Path | None = None,
+) -> dict[str, Any]:
+    analyzed: list[dict[str, Any]] = []
+    rows: list[dict[str, Any]] = []
+    errors: list[dict[str, str]] = []
+    for root in roots:
+        try:
+            payload = build_payload(root, all_opencl_artifacts, opencl_primary_ptx)
+            analyzed.append(payload)
+            rows.extend(suite_rows_from_payload(payload))
+        except Exception as exc:
+            errors.append({"artifact_root": str(root), "error": repr(exc)})
+    return {"runs": analyzed, "rows": rows, "errors": errors}
+
+
+def filter_suite_rows(rows: list[dict[str, Any]], filters: Sequence[str]) -> list[dict[str, Any]]:
+    """Filter flattened rows with key=value or key!=value predicates."""
+    out = rows
+    for expr in filters:
+        neg = "!=" in expr
+        if neg:
+            key, expected = expr.split("!=", 1)
+        elif "=" in expr:
+            key, expected = expr.split("=", 1)
+        else:
+            raise ValueError(f"invalid --where expression {expr!r}; use key=value or key!=value")
+        key = key.strip()
+        expected = expected.strip()
+        if neg:
+            out = [r for r in out if str(r.get(key, "")) != expected]
+        else:
+            out = [r for r in out if str(r.get(key, "")) == expected]
+    return out
+
+
+def write_suite_csv(path: Path, rows: Sequence[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not rows:
+        path.write_text("", encoding="utf-8")
+        return
+    fields = sorted({k for row in rows for k in row})
+    with path.open("w", newline="", encoding="utf-8") as outf:
+        writer = csv.DictWriter(outf, fieldnames=fields)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({k: _stringify_cell(row.get(k, "")) for k in fields})
+
+
+def _maybe_float(value: Any) -> float | None:
+    if isinstance(value, bool) or value in (None, ""):
+        return None
+    try:
+        f = float(value)
+    except Exception:
+        return None
+    if math.isnan(f) or math.isinf(f):
+        return None
+    return f
+
+
+def _plot_safe_name(text: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", text).strip("_") or "plot"
+
+
+def plot_suite_metrics(
+    rows: Sequence[dict[str, Any]],
+    *,
+    metrics: Sequence[str],
+    x: str,
+    series: str = "backend",
+    out_dir: Path,
+) -> list[Path]:
+    """Plot queried suite metrics. Requires matplotlib only when called."""
+    import matplotlib.pyplot as plt  # type: ignore
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    paths: list[Path] = []
+    for metric in metrics:
+        points_by_series: dict[str, list[tuple[Any, float]]] = {}
+        x_is_numeric = True
+        for row in rows:
+            y = _maybe_float(row.get(metric))
+            if y is None:
+                continue
+            xv_raw = row.get(x, "")
+            xv_num = _maybe_float(xv_raw)
+            if xv_num is None:
+                x_is_numeric = False
+                xv: Any = str(xv_raw)
+            else:
+                xv = xv_num
+            label = str(row.get(series, "")) or "series"
+            points_by_series.setdefault(label, []).append((xv, y))
+        if not points_by_series:
+            continue
+
+        # Stable categorical coordinate mapping if any x values are non-numeric.
+        category_map: dict[str, int] = {}
+        if not x_is_numeric:
+            cats = sorted({str(xv) for pts in points_by_series.values() for xv, _ in pts})
+            category_map = {c: i for i, c in enumerate(cats)}
+
+        fig, ax = plt.subplots()
+        for label, pts in sorted(points_by_series.items()):
+            if not x_is_numeric:
+                xs = [category_map[str(xv)] for xv, _ in pts]
+            else:
+                xs = [float(xv) for xv, _ in pts]
+            ys = [yv for _, yv in pts]
+            order = sorted(range(len(xs)), key=lambda i: xs[i])
+            xs = [xs[i] for i in order]
+            ys = [ys[i] for i in order]
+            ax.plot(xs, ys, marker="o", label=label)
+        ax.set_xlabel(x)
+        ax.set_ylabel(metric)
+        ax.set_title(f"{metric} vs {x}")
+        if len(points_by_series) > 1:
+            ax.legend()
+        if not x_is_numeric:
+            cats = [c for c, _ in sorted(category_map.items(), key=lambda kv: kv[1])]
+            ax.set_xticks(list(range(len(cats))))
+            ax.set_xticklabels(cats, rotation=30, ha="right")
+        fig.tight_layout()
+        path = out_dir / f"{_plot_safe_name(metric)}_vs_{_plot_safe_name(x)}_by_{_plot_safe_name(series)}.png"
+        fig.savefig(path, dpi=160)
+        plt.close(fig)
+        paths.append(path)
+    return paths
+
+
+def render_suite_terminal(rows: Sequence[dict[str, Any]], *, metrics: Sequence[str]) -> str:
+    width = shutil.get_terminal_size((120, 24)).columns
+    shown_metrics = list(metrics) if metrics else ["run_status", "gflops", "s_per_iter", "ptxas_registers_max", "sass_instruction_lines", "backend_error_repr"]
+    headers = ["case", "backend", *shown_metrics]
+    table_rows: list[list[str]] = []
+    for row in rows:
+        table_rows.append([fmt(row.get(h, "")) for h in headers])
+    return "\n".join([
+        f"Suite summary: {len(rows)} backend rows",
+        table(headers, table_rows, width) if table_rows else "No rows matched.",
+    ])
+
+
+# }}}
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("artifact_root", type=Path)
+    parser = argparse.ArgumentParser(description="Analyze Loopy OpenCL/CUDA compiler artifacts and benchmark manifests.")
+    parser.add_argument("artifact_roots", nargs="*", type=Path, help="One run directory, or one/more parent directories in suite mode.")
     parser.add_argument("--format", choices=["terminal","json"], default="terminal")
     parser.add_argument("--json", dest="json_out", type=Path)
     parser.add_argument("--csv", dest="csv_out", type=Path)
@@ -777,10 +1036,71 @@ def main() -> None:
     parser.add_argument("--color", choices=["auto","always","never"], default="auto")
     parser.add_argument("--no-color", action="store_true")
     parser.add_argument("--all-opencl-artifacts", action="store_true", help="Sum every OpenCL artifact instead of selecting one primary POCL artifact.")
-    parser.add_argument("--opencl-primary-ptx", type=Path, default=None, help="Explicit OpenCL/POCL PTX file to use for OpenCL metrics.")
+    parser.add_argument("--opencl-primary-ptx", type=Path, default=None, help="Explicit OpenCL/POCL PTX file to use for OpenCL metrics in single-run mode.")
+
+    parser.add_argument("--suite-root", action="append", type=Path, default=[], help="Parent directory containing many run_manifest.json files. May be repeated.")
+    parser.add_argument("--suite", action="store_true", help="Analyze multiple run directories and emit one row per backend.")
+    parser.add_argument("--no-recursive", action="store_true", help="Do not recursively discover run_manifest.json under suite roots.")
+    parser.add_argument("--where", action="append", default=[], help="Suite filter: key=value or key!=value, e.g. backend=cuda or metadata.variant=tiled.")
+    parser.add_argument("--metric", action="append", default=[], help="Metric column to show/plot. May be repeated. Also accepts comma-separated names.")
+    parser.add_argument("--plot-metric", action="append", default=[], help="Metric to plot. May be repeated. Also accepts comma-separated names.")
+    parser.add_argument("--plot-x", default="metadata.m", help="X-axis column for suite plots, e.g. metadata.m, metadata.n, case.")
+    parser.add_argument("--plot-series", default="backend", help="Series/grouping column for suite plots.")
+    parser.add_argument("--plot-dir", type=Path, default=None, help="Directory for PNG plots. Enables plotting when --plot-metric is set.")
     args = parser.parse_args()
 
-    root = args.artifact_root.resolve()
+    requested_metrics = [m.strip() for item in args.metric for m in item.split(",") if m.strip()]
+    requested_plot_metrics = [m.strip() for item in args.plot_metric for m in item.split(",") if m.strip()]
+
+    suite_mode = args.suite or bool(args.suite_root) or len(args.artifact_roots) > 1
+    if suite_mode:
+        roots_input = [*args.suite_root, *args.artifact_roots]
+        if not roots_input:
+            parser.error("suite mode needs at least one --suite-root or artifact root")
+        run_roots = discover_run_roots(roots_input, recursive=not args.no_recursive)
+        suite_payload = build_suite_payload(
+            run_roots,
+            all_opencl_artifacts=args.all_opencl_artifacts,
+            opencl_primary_ptx=None,
+        )
+        rows = filter_suite_rows(suite_payload["rows"], args.where)
+        suite_payload["filtered_rows"] = rows
+
+        if args.format == "json":
+            print(json.dumps(suite_payload, indent=2, sort_keys=True, default=str))
+        else:
+            print(render_suite_terminal(rows, metrics=requested_metrics))
+            if suite_payload.get("errors"):
+                print("\nErrors:")
+                for err in suite_payload["errors"]:
+                    print(f"  - {err['artifact_root']}: {err['error']}")
+
+        if args.json_out:
+            args.json_out.parent.mkdir(parents=True, exist_ok=True)
+            args.json_out.write_text(json.dumps(suite_payload, indent=2, sort_keys=True, default=str), encoding="utf-8")
+        if args.csv_out:
+            write_suite_csv(args.csv_out, rows)
+        if args.markdown_out:
+            lines = ["# Loopy perf suite summary", "", f"Rows: {len(rows)}", ""]
+            metric_cols = requested_metrics or ["gflops", "s_per_iter", "ptxas_registers_max"]
+            lines.append("| case | backend | " + " | ".join(metric_cols) + " |")
+            lines.append("|---|---" + "|---:" * len(metric_cols) + "|")
+            for row in rows:
+                lines.append("| " + " | ".join([fmt(row.get("case", "")), fmt(row.get("backend", "")), *[fmt(row.get(m, "")) for m in metric_cols]]) + " |")
+            args.markdown_out.parent.mkdir(parents=True, exist_ok=True)
+            args.markdown_out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+        if requested_plot_metrics:
+            plot_dir = args.plot_dir or Path("suite_plots")
+            paths = plot_suite_metrics(rows, metrics=requested_plot_metrics, x=args.plot_x, series=args.plot_series, out_dir=plot_dir)
+            if args.format != "json":
+                for path in paths:
+                    print(f"wrote plot: {path}")
+        return
+
+    if not args.artifact_roots:
+        parser.error("artifact_root is required unless --suite-root is used")
+    root = args.artifact_roots[0].resolve()
     payload = build_payload(root, args.all_opencl_artifacts, args.opencl_primary_ptx)
 
     if args.format == "json":
@@ -790,13 +1110,15 @@ def main() -> None:
         print(render_terminal(payload, pal, args.top_opcodes, args.print_files))
 
     if args.json_out:
+        args.json_out.parent.mkdir(parents=True, exist_ok=True)
         args.json_out.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
     if args.csv_out:
+        args.csv_out.parent.mkdir(parents=True, exist_ok=True)
         write_csv(args.csv_out, payload["summaries"])
     if args.markdown_out:
+        args.markdown_out.parent.mkdir(parents=True, exist_ok=True)
         write_markdown(args.markdown_out, payload)
 
 
 if __name__ == "__main__":
     main()
-
