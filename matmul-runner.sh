@@ -12,7 +12,6 @@ export LOOPY_NO_CACHE=1
 export PYOPENCL_NO_CACHE=1
 export CUDA_CACHE_DISABLE=1
 
-#!/usr/bin/env bash
 # Simple matrix-size sweep for matmul_suite.py.
 #
 # This is the normal runner. It uses matmul_suite.py directly, the same way the
@@ -27,7 +26,7 @@ SIZES="${SIZES:-1024,2048,4096,8192}"
 SHAPES="${SHAPES:-}"
 BACKENDS="${BACKENDS:-opencl,cuda}"
 
-VARIANT="${VARIANT:-register}"
+VARIANT="${VARIANT:-all}"
 BM="${BM:-128}"
 BN="${BN:-128}"
 BK="${BK:-16}"
@@ -57,20 +56,34 @@ else
   done
 fi
 
+# NOTE: opencl/cuda runs in the same process result in invalid handle errors
+# from the CUDA side (not sure why, no time to investigate as of 5/3/26). run cl
+# in one python process, then run cuda in another. merge csv files later for
+# analysis/plotting/etc.
 python "${MATMUL_SUITE}" \
   "${shape_args[@]}" \
   --variant "${VARIANT}" \
   --bm "${BM}" --bn "${BN}" --bk "${BK}" \
   --tm "${TM}" --tn "${TN}" \
-  --backend "${BACKENDS}" \
+  --backend "opencl" \
   --cuda-arch "${CUDA_ARCH}" \
   --artifact-dir "${ARTIFACT_DIR}" \
   --suite-name "${SUITE_NAME}" \
   --nwarmup "${NWARMUP}" \
   --niterations "${NITERATIONS}" \
   --dump-artifacts \
-  --analyze \
-  --plot-metric gflops \
-  --plot-metric ptxas_registers_max \
-  --plot-x metadata.m \
-  --plot-series backend
+  --analyze
+
+python "${MATMUL_SUITE}" \
+  "${shape_args[@]}" \
+  --variant "${VARIANT}" \
+  --bm "${BM}" --bn "${BN}" --bk "${BK}" \
+  --tm "${TM}" --tn "${TN}" \
+  --backend "cuda" \
+  --cuda-arch "${CUDA_ARCH}" \
+  --artifact-dir "${ARTIFACT_DIR}" \
+  --suite-name "${SUITE_NAME}" \
+  --nwarmup "${NWARMUP}" \
+  --niterations "${NITERATIONS}" \
+  --dump-artifacts \
+  --analyze

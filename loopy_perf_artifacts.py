@@ -46,7 +46,6 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
-import time
 import traceback
 from typing import Any, Callable, Iterable, Literal, Mapping, Sequence
 
@@ -59,6 +58,41 @@ BackendName = Literal["opencl", "cuda"]
 HostArgs = Mapping[str, Any]
 FlopCount = int | float | Callable[[HostArgs], int | float]
 ValidateFn = Callable[[BackendName, Mapping[str, Any], Any], Mapping[str, Any] | None]
+
+# POCL reads some cache/configuration environment variables only during runtime
+# initialization. In a long-lived Python process, changing POCL_CACHE_DIR for
+# every suite case can therefore lead to exactly one run with captured POCL
+# artifacts followed by later runs that execute correctly but appear to have no
+# PTX/SASS artifacts. Keep one effective POCL cache directory per Python
+# process and collect per-run *deltas* from that cache.
+_POCL_CAPTURE_SESSION_CACHE_DIR: Path | None = None
+_POCL_CACHE_PRE_SNAPSHOTS: dict[str, dict[str, tuple[int, int]]] = {}
+
+
+def _snapshot_files(root: Path | None) -> dict[str, tuple[int, int]]:
+    """Return a cheap path -> (mtime_ns, size) snapshot for delta capture."""
+    snap: dict[str, tuple[int, int]] = {}
+    if root is None or not root.exists():
+        return snap
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        try:
+            st = path.stat()
+        except OSError:
+            continue
+        snap[str(path.resolve())] = (int(st.st_mtime_ns), int(st.st_size))
+    return snap
+
+
+def _file_changed_since_snapshot(path: Path, snapshot: Mapping[str, tuple[int, int]]) -> bool:
+    """True when *path* is new or its cheap metadata changed."""
+    try:
+        st = path.stat()
+    except OSError:
+        return False
+    key = str(path.resolve())
+    return snapshot.get(key) != (int(st.st_mtime_ns), int(st.st_size))
 
 
 def make_pyopencl_target() -> Any:
@@ -422,24 +456,51 @@ def _is_pocl_context(ctx: cl.Context) -> bool:
 
 
 def setup_pocl_capture_env(run_dir: str | Path, enabled: bool = True) -> dict[str, Any]:
-    """Force POCL to use a run-local cache.
+    """Configure POCL artifact capture for a run.
 
-    Call this before creating the OpenCL context or constructing a Loopy executor.
+    This function is intentionally session-aware. POCL may read ``POCL_CACHE_DIR``
+    only when the POCL runtime is first initialized in a Python process. If a
+    suite changes ``POCL_CACHE_DIR`` for every case, later cases may still write
+    compiler artifacts into the first cache directory. To avoid the "first
+    OpenCL case has registers, all later cases are blank" failure mode, the
+    first enabled call chooses the effective cache directory and later calls keep
+    using it while recording a pre-run snapshot for delta extraction.
     """
-    run_dir = Path(run_dir)
+    global _POCL_CAPTURE_SESSION_CACHE_DIR
+
+    run_dir = Path(run_dir).resolve()
     info: dict[str, Any] = {
         "enabled": enabled,
         "cache_dir": None,
+        "requested_cache_dir": None,
+        "effective_cache_dir": None,
+        "reuse_session_cache": False,
+        "pre_snapshot_file_count": 0,
         "changes": {},
         "warnings": [],
     }
     if not enabled:
         return info
 
-    cache_dir = run_dir / "opencl" / "pocl-cache"
-    if cache_dir.exists():
-        shutil.rmtree(cache_dir, ignore_errors=True)
-    _mkdir(cache_dir)
+    requested_cache_dir = run_dir / "opencl" / "pocl-cache"
+    info["requested_cache_dir"] = str(requested_cache_dir)
+
+    if _POCL_CAPTURE_SESSION_CACHE_DIR is None:
+        # First OpenCL artifact-capture run in this Python process. This is the
+        # only point where changing POCL_CACHE_DIR is guaranteed to affect POCL.
+        cache_dir = requested_cache_dir
+        if cache_dir.exists():
+            shutil.rmtree(cache_dir, ignore_errors=True)
+        _mkdir(cache_dir)
+        _POCL_CAPTURE_SESSION_CACHE_DIR = cache_dir.resolve()
+    else:
+        cache_dir = _POCL_CAPTURE_SESSION_CACHE_DIR
+        info["reuse_session_cache"] = True
+        info["warnings"].append(
+            "Reusing the process-global POCL cache directory because POCL may ignore "
+            "POCL_CACHE_DIR changes after runtime initialization. Per-run POCL "
+            "artifacts are extracted as cache deltas."
+        )
 
     updates = {
         "POCL_CACHE_DIR": str(cache_dir.resolve()),
@@ -453,11 +514,13 @@ def setup_pocl_capture_env(run_dir: str | Path, enabled: bool = True) -> dict[st
         os.environ[key] = val
         info["changes"][key] = {"old": old, "new": val}
 
-    info["cache_dir"] = updates["POCL_CACHE_DIR"]
-    if os.environ.get("POCL_DEVICES") is None:
-        info["warnings"].append("POCL_DEVICES is not set; set POCL_DEVICES=CUDA externally if needed.")
-    return info
+    pre_snapshot = _snapshot_files(cache_dir)
+    _POCL_CACHE_PRE_SNAPSHOTS[str(run_dir)] = pre_snapshot
 
+    info["cache_dir"] = updates["POCL_CACHE_DIR"]
+    info["effective_cache_dir"] = updates["POCL_CACHE_DIR"]
+    info["pre_snapshot_file_count"] = len(pre_snapshot)
+    return info
 
 def collect_pocl_cache_artifacts(
     out_dir: str | Path,
@@ -465,8 +528,10 @@ def collect_pocl_cache_artifacts(
     ptxas_arch: str,
     run_external_tools: bool = True,
 ) -> dict[str, Any]:
-    out_dir = Path(out_dir)
+    out_dir = Path(out_dir).resolve()
+    run_dir = out_dir.parent
     dst_root = _mkdir(out_dir / "pocl-cache-extracted")
+    pre_snapshot = _POCL_CACHE_PRE_SNAPSHOTS.get(str(run_dir.resolve()))
     result: dict[str, Any] = {
         "kind": "run_local_pocl_cache",
         "env": {
@@ -475,7 +540,6 @@ def collect_pocl_cache_artifacts(
                 "POCL_CACHE_DIR",
                 "POCL_KERNEL_CACHE",
                 "POCL_LEAVE_KERNEL_COMPILER_TEMP_FILES",
-                "POCL_DEVICES",
                 "POCL_CUDA_GPU_ARCH",
                 "POCL_CUDA_DUMP_NVVM",
                 "POCL_DEBUG",
@@ -490,6 +554,13 @@ def collect_pocl_cache_artifacts(
         "primary_ptx": None,
         "tool_outputs": [],
         "warnings": [],
+        "delta_filter": {
+            "enabled": pre_snapshot is not None,
+            "pre_snapshot_file_count": len(pre_snapshot or {}),
+            "considered_file_count": 0,
+            "unchanged_file_count": 0,
+            "changed_file_count": 0,
+        },
     }
 
     if cache_dir is None:
@@ -515,6 +586,14 @@ def collect_pocl_cache_artifacts(
         for path in cache_dir_path.rglob("*"):
             if not path.is_file():
                 continue
+
+            result["delta_filter"]["considered_file_count"] += 1
+            if pre_snapshot is not None and not _file_changed_since_snapshot(path, pre_snapshot):
+                result["delta_filter"]["unchanged_file_count"] += 1
+                continue
+            if pre_snapshot is not None:
+                result["delta_filter"]["changed_file_count"] += 1
+
             try:
                 data = path.read_bytes()
             except Exception:
@@ -568,6 +647,14 @@ def collect_pocl_cache_artifacts(
                 ptx_candidates.append(ptx_path)
     else:
         result["warnings"].append(f"POCL cache directory does not exist: {cache_dir_path}")
+
+    if pre_snapshot is not None and not ptx_candidates:
+        result["warnings"].append(
+            "No new or modified PTX was found in the process-global POCL cache for this run. "
+            "The OpenCL benchmark may have reused an existing POCL cache entry, or POCL may not "
+            "have emitted CUDA/PTX artifacts for this kernel. Rerun this case in a fresh Python "
+            "process or clear the process-global POCL cache if you need per-case POCL compiler metrics."
+        )
 
     if ptx_candidates:
         primary = max(ptx_candidates, key=lambda p: p.stat().st_size)
@@ -969,15 +1056,6 @@ def benchmark_cuda(
 
     import cupy as cp  # type: ignore
 
-    # POCL's CUDA backend and CuPy both use the CUDA driver/runtime.  After an
-    # OpenCL/POCL launch, the process' current CUDA context can be different
-    # from CuPy's primary context.  Re-select the CuPy device before creating
-    # modules, arrays, streams, or events.  This avoids many
-    # CUDA_ERROR_INVALID_HANDLE failures when OpenCL and CUDA are benchmarked
-    # in the same Python process.
-    device = cp.cuda.Device()
-    device.use()
-
     cuda_knl = knl.copy(target=lp.CudaTarget())
     device_code = lp.generate_code_v2(cuda_knl).device_code()
     kernel_name = launch.kernel_name or infer_cuda_kernel_name(cuda_knl, device_code)
@@ -1002,53 +1080,19 @@ def benchmark_cuda(
     grid = tuple(int(i) for i in _resolve_call_or_value(launch.grid, args))
     block = tuple(int(i) for i in _resolve_call_or_value(launch.block, args))
 
-    # Use an explicit CuPy stream rather than whatever stream/context another
-    # CUDA-using library may have left current.  If CUDA event timing still
-    # fails, fall back to host-side timing around synchronized kernel launches.
-    stream = cp.cuda.Stream(non_blocking=False)
+    for _ in range(nwarmup):
+        raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem)
+    cp.cuda.Device().synchronize()
 
-    def launch_once() -> None:
-        raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem, stream=stream)
+    start_evt = cp.cuda.Event()
+    end_evt = cp.cuda.Event()
+    start_evt.record()
+    for _ in range(niterations):
+        raw_kernel(grid, block, arg_tuple, shared_mem=launch.shared_mem)
+    end_evt.record()
+    end_evt.synchronize()
 
-    with stream:
-        for _ in range(nwarmup):
-            launch_once()
-    stream.synchronize()
-    device.synchronize()
-
-    timing_method = "cuda_event"
-    timing_warning: str | None = None
-    try:
-        start_evt = cp.cuda.Event()
-        end_evt = cp.cuda.Event()
-        with stream:
-            start_evt.record(stream)
-            for _ in range(niterations):
-                launch_once()
-            end_evt.record(stream)
-        end_evt.synchronize()
-        total_elapsed_s = cp.cuda.get_elapsed_time(start_evt, end_evt) * 1e-3
-    except Exception as event_exc:
-        # This is primarily a guard for CUDA_ERROR_INVALID_HANDLE from event
-        # handles after POCL/CUDA activity in the same process.  The fallback is
-        # less precise because it includes Python launch overhead, but it keeps
-        # the suite producing a usable GFLOP/s value and records the downgrade in
-        # the benchmark row.
-        timing_method = "host_synchronized_fallback"
-        timing_warning = repr(event_exc)
-        try:
-            stream.synchronize()
-            device.synchronize()
-        except Exception:
-            pass
-        t0 = time.perf_counter()
-        with stream:
-            for _ in range(niterations):
-                launch_once()
-        stream.synchronize()
-        device.synchronize()
-        total_elapsed_s = time.perf_counter() - t0
-
+    total_elapsed_s = cp.cuda.get_elapsed_time(start_evt, end_evt) * 1e-3
     flops = _resolve_flop_count(flop_count, args)
 
     extra: dict[str, Any] = {
@@ -1058,10 +1102,7 @@ def benchmark_cuda(
         "block": block,
         "shared_mem": int(launch.shared_mem),
         "arg_order": arg_order,
-        "timing_method": timing_method,
     }
-    if timing_warning is not None:
-        extra["timing_warning"] = timing_warning
     try:
         extra["raw_kernel_attributes"] = dict(raw_kernel.attributes)
     except Exception:
@@ -1361,3 +1402,4 @@ __all__ = [
     "run_loopy_perf_case",
     "setup_pocl_capture_env",
 ]
+

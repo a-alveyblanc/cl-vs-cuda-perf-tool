@@ -14,6 +14,7 @@ Typical H200-style run::
         --variant register \
         --shape 2048x2048x2048 --shape 4096x4096x4096 \
         --bm 64 --bn 64 --bk 32 --tm 4 --tn 4 \
+        --naive-bm 32 --naive-bn 32 --shared-bm 32 --shared-bn 32 \
         --use-cuda --dump-artifacts --cuda-arch sm_90 \
         --opencl-build-option=-cl-nv-verbose \
         --analyze --plot-metric gflops,ptxas_registers_max
@@ -42,7 +43,7 @@ import loopy as lp
 from loopy.transform.compute import compute
 from loopy.version import LOOPY_USE_LANGUAGE_VERSION_2018_2  # noqa: F401
 
-from loopy_perf_artifacts import CudaLaunchSpec, LoopyPerfCase, make_pyopencl_target
+from loopy_perf_artifacts import CudaLaunchSpec, LoopyPerfCase
 from loopy_perf_suite import SuiteResult, iter_param_grid, run_loopy_perf_suite
 
 
@@ -259,7 +260,7 @@ def make_base_matmul_kernel(
             lp.GlobalArg("b", shape=(k, n), dtype=dtype),
             lp.GlobalArg("c", shape=(m, n), dtype=dtype, is_output=True),
         ],
-        target=make_pyopencl_target(),
+        target=lp.OpenCLTarget(),
     )
     return lp.fix_parameters(knl, M=m, N=n, K=k)
 
@@ -513,32 +514,55 @@ def iter_configs(args: argparse.Namespace) -> Iterator[MatmulConfig]:
         variants = ["register"]
 
     shape_list = list(iter_problem_shapes(args))
-    tile_grid = {
-        "bm": args.bm,
-        "bn": args.bn,
-        "bk": args.bk,
-        "tm": args.tm,
-        "tn": args.tn,
-        "variant": variants,
-    }
-
     seen: set[MatmulConfig] = set()
+
     for m, n, k in shape_list:
-        for p in iter_param_grid(tile_grid):
-            cfg = MatmulConfig(
-                m=m,
-                n=n,
-                k=k,
-                bm=int(p["bm"]),
-                bn=int(p["bn"]),
-                bk=int(p["bk"]),
-                tm=int(p["tm"]),
-                tn=int(p["tn"]),
-                variant=str(p["variant"]),
-            )
-            if cfg not in seen:
-                seen.add(cfg)
-                yield cfg
+        for variant in variants:
+            # Keep baseline-style variants independent from the register-tiled
+            # sweep. The naive and shared-memory variants use one work-item per
+            # output element in the CUDA block, so inheriting large register
+            # tuning parameters such as bm=128,bn=128 would create impossible
+            # 16k-thread blocks.
+            if variant == "naive":
+                tile_grid = {
+                    "bm": args.naive_bm,
+                    "bn": args.naive_bn,
+                    "bk": args.naive_bk,
+                    "tm": [1],
+                    "tn": [1],
+                }
+            elif variant == "shared":
+                tile_grid = {
+                    "bm": args.shared_bm,
+                    "bn": args.shared_bn,
+                    "bk": args.shared_bk,
+                    "tm": [1],
+                    "tn": [1],
+                }
+            else:
+                tile_grid = {
+                    "bm": args.bm,
+                    "bn": args.bn,
+                    "bk": args.bk,
+                    "tm": args.tm,
+                    "tn": args.tn,
+                }
+
+            for p in iter_param_grid(tile_grid):
+                cfg = MatmulConfig(
+                    m=m,
+                    n=n,
+                    k=k,
+                    bm=int(p["bm"]),
+                    bn=int(p["bn"]),
+                    bk=int(p["bk"]),
+                    tm=int(p["tm"]),
+                    tn=int(p["tn"]),
+                    variant=variant,
+                )
+                if cfg not in seen:
+                    seen.add(cfg)
+                    yield cfg
 
 
 def dtype_from_name(name: str) -> np.dtype[Any]:
@@ -617,11 +641,67 @@ def build_arg_parser() -> argparse.ArgumentParser:
     shape_group.add_argument("--k", type=parse_csv_ints, default=[1024], help="Comma-separated K values. Default: 1024")
 
     tile_group = parser.add_argument_group("tile parameters")
-    tile_group.add_argument("--bm", type=parse_csv_ints, default=[64])
-    tile_group.add_argument("--bn", type=parse_csv_ints, default=[64])
-    tile_group.add_argument("--bk", type=parse_csv_ints, default=[32])
-    tile_group.add_argument("--tm", type=parse_csv_ints, default=[4])
-    tile_group.add_argument("--tn", type=parse_csv_ints, default=[4])
+    tile_group.add_argument("--bm", type=parse_csv_ints, default=[64], help="Tiled/register block size in M. Default: 64")
+    tile_group.add_argument("--bn", type=parse_csv_ints, default=[64], help="Tiled/register block size in N. Default: 64")
+    tile_group.add_argument("--bk", type=parse_csv_ints, default=[32], help="Reduction tile size. Default: 32")
+    tile_group.add_argument("--tm", type=parse_csv_ints, default=[4], help="Register-tile size in M. Default: 4")
+    tile_group.add_argument("--tn", type=parse_csv_ints, default=[4], help="Register-tile size in N. Default: 4")
+    tile_group.add_argument(
+        "--naive-bm",
+        type=parse_csv_ints,
+        default=[32],
+        help=(
+            "Naive variant block size in M. Default: 32. "
+            "This is independent of --bm so --variant all can use large tiled/register blocks "
+            "without making the naive CUDA block exceed 1024 threads."
+        ),
+    )
+    tile_group.add_argument(
+        "--naive-bn",
+        type=parse_csv_ints,
+        default=[32],
+        help=(
+            "Naive variant block size in N. Default: 32. "
+            "This is independent of --bn for the same reason as --naive-bm."
+        ),
+    )
+    tile_group.add_argument(
+        "--naive-bk",
+        type=parse_csv_ints,
+        default=[32],
+        help=(
+            "Naive variant reduction split. Default: 32. "
+            "This is independent of --bk so tiled/register reduction tuning does not change the naive baseline."
+        ),
+    )
+    tile_group.add_argument(
+        "--shared-bm",
+        type=parse_csv_ints,
+        default=[32],
+        help=(
+            "Shared-memory variant block size in M. Default: 32. "
+            "This is independent of --bm so --variant all can use large register tiles "
+            "without making the shared CUDA block exceed 1024 threads."
+        ),
+    )
+    tile_group.add_argument(
+        "--shared-bn",
+        type=parse_csv_ints,
+        default=[32],
+        help=(
+            "Shared-memory variant block size in N. Default: 32. "
+            "This is independent of --bn for the same reason as --shared-bm."
+        ),
+    )
+    tile_group.add_argument(
+        "--shared-bk",
+        type=parse_csv_ints,
+        default=[32],
+        help=(
+            "Shared-memory variant reduction tile size. Default: 32. "
+            "This is independent of --bk for cleaner naive/shared/register comparisons."
+        ),
+    )
 
     variant_group = parser.add_argument_group("kernel variants")
     variant_group.add_argument("--variant", action="append", default=None, help="naive, shared, register, all. May be repeated or comma-separated. Default: register")
@@ -653,7 +733,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
     analyze_group = parser.add_argument_group("post-run analysis and plots")
     analyze_group.add_argument("--analyze", action="store_true", help="Run analyze_compiler_artifacts.py on the generated suite directory.")
-    analyze_group.add_argument("--metric", action="append", default=["run_status", "gflops", "s_per_iter", "ptxas_registers_max", "sass_instruction_lines", "backend_error_repr"], help="Analyzer metric to show. May be repeated or comma-separated.")
+    analyze_group.add_argument("--metric", action="append", default=["gflops", "s_per_iter", "ptxas_registers_max", "sass_instruction_lines"], help="Analyzer metric to show. May be repeated or comma-separated.")
     analyze_group.add_argument("--plot-metric", action="append", default=[], help="Analyzer metric to plot, e.g. gflops,ptxas_registers_max. May be repeated or comma-separated.")
     analyze_group.add_argument("--plot-x", default="metadata.m")
     analyze_group.add_argument("--plot-series", default="backend")
@@ -743,3 +823,4 @@ def main(argv: Sequence[str] | None = None) -> SuiteResult | None:
 
 if __name__ == "__main__":
     main()
+

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Select the OpenCL platform/device used by pyopencl.create_some_context().
 # Adjust this after checking `clinfo` or the PyOpenCL prompt once.
@@ -13,12 +13,16 @@ export PYOPENCL_NO_CACHE=1
 export CUDA_CACHE_DISABLE=1
 
 python finite_difference_2_5d_suite.py \
+  --backend opencl \
   --variant all \
-  --npoints 64,128,256 \
-  --stencil-width 5,9 \
-  --use-cuda \
+  --npoints 32,64,128,256,512 \
+  --stencil-width 3,5,9 \
+  --analyze
+
+python finite_difference_2_5d_suite.py \
+  --backend cuda \
+  --variant all \
+  --npoints 32,64,128,256,512 \
+  --stencil-width 3,5,9 \
   --validate \
-  --analyze \
-  --plot-metric gflops,ptxas_registers_max \
-  --plot-x metadata.npts \
-  --plot-series metadata.variant
+  --analyze

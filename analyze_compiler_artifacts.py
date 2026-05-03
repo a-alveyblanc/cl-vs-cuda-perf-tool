@@ -23,7 +23,7 @@ from pathlib import Path
 import re
 import shutil
 import sys
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 
 PTX_PATTERNS: dict[str, re.Pattern[str]] = {
@@ -392,18 +392,86 @@ def select_files(root: Path, grouped_all: dict[str, list[Path]], all_opencl_arti
 
 
 def attach_benchmarks(summaries: dict[str, dict[str, Any]], manifest: dict[str, Any] | None) -> None:
+    """Attach benchmark/runtime status from run_manifest.json to backend summaries.
+
+    This intentionally creates a row for requested-but-failed backends even when
+    no compiler files were parsed for that backend. That makes large suite CSVs
+    auditable: missing GFLOP/s should show up with the backend exception next to
+    the artifact metrics, instead of silently disappearing.
+    """
     if not manifest:
         return
-    for bench in manifest.get("benchmarks", []):
-        if not isinstance(bench, dict):
+
+    params = manifest.get("parameters") or {}
+    requested = set(str(b) for b in (params.get("backends") or []))
+    backend_errors = manifest.get("backend_errors") or {}
+    artifact_errors = manifest.get("artifact_errors") or {}
+    benchmark_records = [b for b in manifest.get("benchmarks", []) if isinstance(b, dict)]
+    benchmark_backends = set(str(b.get("backend")) for b in benchmark_records if b.get("backend"))
+
+    for backend in sorted(set(summaries) | requested | set(backend_errors) | set(artifact_errors) | benchmark_backends):
+        if backend in {"", "None"}:
             continue
+        s = summaries.setdefault(backend, {"backend": backend, "file_count": 0, "files_by_kind": {}, "files": []})
+        s["run_status"] = manifest.get("status", "")
+        s["backend_requested"] = backend in requested if requested else ""
+        s["backend_succeeded"] = backend in benchmark_backends
+
+        if backend in backend_errors and isinstance(backend_errors[backend], dict):
+            err = backend_errors[backend]
+            s["backend_error_type"] = err.get("type", "")
+            s["backend_error_repr"] = err.get("repr", "")
+            s["backend_error_traceback_file"] = f"{backend}_benchmark_exception.txt"
+        if backend in artifact_errors and isinstance(artifact_errors[backend], dict):
+            err = artifact_errors[backend]
+            s["artifact_error_type"] = err.get("type", "")
+            s["artifact_error_repr"] = err.get("repr", "")
+            s["artifact_error_traceback_file"] = f"{backend}_artifact_exception.txt"
+
+    for bench in benchmark_records:
         backend = bench.get("backend")
         if not backend:
             continue
-        summaries.setdefault(backend, {"backend": backend, "file_count": 0, "files_by_kind": {}, "files": []})
-        for k in ("gflops", "s_per_iter", "total_elapsed_s", "error"):
-            if k in bench:
-                summaries[backend][k] = bench[k]
+        s = summaries.setdefault(str(backend), {"backend": str(backend), "file_count": 0, "files_by_kind": {}, "files": []})
+        for k, v in bench.items():
+            if k == "backend":
+                continue
+            s[k] = v
+
+
+def attach_artifact_manifest_diagnostics(root: Path, summaries: dict[str, dict[str, Any]]) -> None:
+    """Expose artifact-selection diagnostics as flat CSV columns."""
+    for backend in ("opencl", "cuda"):
+        manifest = load_artifact_manifest(root, backend)
+        s = summaries.get(backend)
+        if s is None:
+            if manifest is None:
+                continue
+            s = summaries.setdefault(backend, {"backend": backend, "file_count": 0, "files_by_kind": {}, "files": []})
+        s["artifact_manifest_present"] = manifest is not None
+        if not manifest:
+            continue
+        if backend == "opencl":
+            s["opencl_is_pocl_context"] = manifest.get("is_pocl_context", "")
+            snap = manifest.get("pocl_cache_snapshot") or {}
+            s["opencl_pocl_ptx_file_count"] = len(snap.get("ptx_files") or [])
+            s["opencl_pocl_copied_file_count"] = len(snap.get("copied_files") or [])
+            s["opencl_pocl_primary_ptx_exists"] = (root / "opencl" / "pocl_primary.ptx").exists()
+            delta = snap.get("delta_filter") or {}
+            if isinstance(delta, dict):
+                s["opencl_pocl_delta_enabled"] = delta.get("enabled", "")
+                s["opencl_pocl_pre_snapshot_file_count"] = delta.get("pre_snapshot_file_count", "")
+                s["opencl_pocl_considered_file_count"] = delta.get("considered_file_count", "")
+                s["opencl_pocl_unchanged_file_count"] = delta.get("unchanged_file_count", "")
+                s["opencl_pocl_changed_file_count"] = delta.get("changed_file_count", "")
+            warnings = snap.get("warnings") or manifest.get("warnings") or manifest.get("errors") or []
+            if warnings:
+                s["opencl_artifact_warnings"] = "; ".join(str(w) for w in warnings[:4])
+        elif backend == "cuda":
+            outputs = manifest.get("outputs") or []
+            if isinstance(outputs, list):
+                kinds = Counter(str(o.get("kind", "")) for o in outputs if isinstance(o, dict))
+                s["cuda_output_kinds"] = dict(kinds)
 
 
 def add_derived(summary: dict[str, Any]) -> None:
@@ -452,8 +520,11 @@ def build_payload(root: Path, all_opencl_artifacts: bool = False, opencl_primary
         s["available_files_by_kind"] = dict(Counter(classify_file(f) for f in grouped_all.get(backend, [])))
         summaries[backend] = s
     manifest = load_manifest(root)
+    attach_artifact_manifest_diagnostics(root, summaries)
     attach_benchmarks(summaries, manifest)
-    for s in summaries.values():
+    for backend, s in summaries.items():
+        if backend in {"opencl", "cuda"}:
+            s["selection_notes"] = "; ".join(selection_notes)
         add_derived(s)
     notes = selection_notes + comparison_notes(summaries)
     return {"artifact_root": str(root), "manifest": manifest, "summaries": summaries, "comparison_notes": notes, "selection_notes": selection_notes}
@@ -833,18 +904,11 @@ def suite_rows_from_payload(payload: dict[str, Any]) -> list[dict[str, Any]]:
     """Flatten one analyzed run into one row per backend."""
     root = Path(payload["artifact_root"])
     manifest = payload.get("manifest") or {}
-    backend_errors = manifest.get("backend_errors") or {}
-    artifact_errors = manifest.get("artifact_errors") or {}
     base: dict[str, Any] = {
         "artifact_root": str(root),
         "case": manifest.get("case") or manifest.get("kernel_version") or root.name,
         "created_at": manifest.get("created_at", ""),
         "run_dir": manifest.get("run_dir", str(root)),
-        "run_status": manifest.get("status", ""),
-        "backend_error_count": len(backend_errors) if isinstance(backend_errors, dict) else 0,
-        "artifact_error_count": len(artifact_errors) if isinstance(artifact_errors, dict) else 0,
-        "backend_errors": json.dumps(backend_errors, sort_keys=True, default=str) if backend_errors else "",
-        "artifact_errors": json.dumps(artifact_errors, sort_keys=True, default=str) if artifact_errors else "",
     }
     _flatten_mapping("metadata", manifest.get("metadata") or {}, base)
     _flatten_mapping("parameters", manifest.get("parameters") or {}, base)
@@ -856,16 +920,6 @@ def suite_rows_from_payload(payload: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         row = dict(base)
         row["backend"] = backend
-        if isinstance(backend_errors, dict) and backend in backend_errors:
-            err = backend_errors[backend]
-            if isinstance(err, dict):
-                row["backend_error_type"] = err.get("type", "")
-                row["backend_error_repr"] = err.get("repr", "")
-        if isinstance(artifact_errors, dict) and backend in artifact_errors:
-            err = artifact_errors[backend]
-            if isinstance(err, dict):
-                row["artifact_error_type"] = err.get("type", "")
-                row["artifact_error_repr"] = err.get("repr", "")
         for key, value in summary.items():
             if key in {"files", "files_by_kind", "sass_opcode_counts"}:
                 continue
@@ -1010,7 +1064,7 @@ def plot_suite_metrics(
 
 def render_suite_terminal(rows: Sequence[dict[str, Any]], *, metrics: Sequence[str]) -> str:
     width = shutil.get_terminal_size((120, 24)).columns
-    shown_metrics = list(metrics) if metrics else ["run_status", "gflops", "s_per_iter", "ptxas_registers_max", "sass_instruction_lines", "backend_error_repr"]
+    shown_metrics = list(metrics) if metrics else ["gflops", "s_per_iter", "ptxas_registers_max", "sass_instruction_lines"]
     headers = ["case", "backend", *shown_metrics]
     table_rows: list[list[str]] = []
     for row in rows:
@@ -1122,3 +1176,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
